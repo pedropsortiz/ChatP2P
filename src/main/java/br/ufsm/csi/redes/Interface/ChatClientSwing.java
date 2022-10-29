@@ -8,13 +8,6 @@ import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * 
- * User: Rafael
- * Date: 13/10/14
- * Time: 10:28
- * 
- */
 public class ChatClientSwing extends JFrame {
 
     private Usuario meuUsuario;
