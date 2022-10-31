@@ -1,13 +1,23 @@
 package br.ufsm.csi.redes.Model;
 
+import br.ufsm.csi.redes.Interface.ChatClientSwing;
+
+import java.net.InetAddress;
+
 public class Usuario {
 
     private String nome;
-    public String username;
+    private ChatClientSwing.StatusUsuario status;
+    private InetAddress endereco;
 
-    public Usuario(String nome, String username) {
+    public enum StatusUsuario {
+        DISPONIVEL, NAO_PERTURBE, VOLTO_LOGO
+    }
+
+    public Usuario(String nome, ChatClientSwing.StatusUsuario status, InetAddress endereco) {
         this.nome = nome;
-        this.username = username;
+        this.status = status;
+        this.endereco = endereco;
     }
 
     public String getNome() {
@@ -18,11 +28,30 @@ public class Usuario {
         this.nome = nome;
     }
 
-    public String getUsername() {
-        return username;
+    public ChatClientSwing.StatusUsuario getStatus() {
+        return status;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setStatus(ChatClientSwing.StatusUsuario status) {
+        this.status = status;
     }
+
+    public InetAddress getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(InetAddress endereco) {
+        this.endereco = endereco;
+    }
+
+    @Override
+    public int hashCode() {
+        return nome.hashCode();
+    }
+
+    public String toString() {
+        return this.getNome() + " (" + getStatus().toString() + ")";
+    }
+
+
 }

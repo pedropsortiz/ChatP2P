@@ -9,13 +9,16 @@ import java.io.Serializable;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class Mensagem implements Serializable {
 
     private TipoMensagem tipoMensagem;
     private Usuario usuario;
-    private Status status;
+
+    public Mensagem(TipoMensagem tipoMensagem, Usuario usuario) {
+        this.tipoMensagem = tipoMensagem;
+        this.usuario = usuario;
+    }
 
     public TipoMensagem getTipoMensagem() {
         return tipoMensagem;
@@ -35,6 +38,5 @@ public class Mensagem implements Serializable {
         this.usuario = usuario;
     }
 
-    public enum Status { DISPONIVEL, NAO_PERTURBE, VOLTO_LOGO }
 
 }
