@@ -3,7 +3,7 @@ import java.io.IOException;
 
 public class Servidor {
 
-    private final int porta = 5000;
+    private final int porta = 8080;
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_START = "\u001B[32m";
 

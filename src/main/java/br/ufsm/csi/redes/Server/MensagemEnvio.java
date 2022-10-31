@@ -16,7 +16,7 @@ import static br.ufsm.csi.redes.Model.Usuario.StatusUsuario.DISPONIVEL;
 
 public class MensagemEnvio implements Runnable{
 
-    private final static int porta = 5000;
+    private final static int porta = 8080;
     Usuario usuario = new Usuario("Pedro", ChatClientSwing.StatusUsuario.DISPONIVEL, InetAddress.getLocalHost());
     BufferedReader mensagemServidor;
     Mensagem mensagem = Mensagem.builder().tipoMensagem( Mensagem.TipoMensagem.SONDA).usuario(usuario).build();

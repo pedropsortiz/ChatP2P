@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 public class MensagemRadar implements Runnable{
 
-    private final static int porta = 5000;
+    private final static int porta = 8080;
 
     ServerSocket conexao = new ServerSocket(porta);
     Socket conexaoCliente;
@@ -29,7 +29,7 @@ public class MensagemRadar implements Runnable{
         while (true){
             conexaoCliente = conexao.accept();
             ObjectInputStream entrada = new ObjectInputStream(conexaoCliente.getInputStream());
-            System.out.print("\nPacote recebido do cliente: " +  entrada);
+            System.out.print("\nMensagem detectada! | " +  entrada);
         }
     }
 }
