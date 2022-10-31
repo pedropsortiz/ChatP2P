@@ -17,6 +17,7 @@ public class ChatClientSwing extends JFrame {
     private JTabbedPane tabbedPane = new JTabbedPane();
     private Set<Usuario> chatsAbertos = new HashSet<>();
 
+
     public ChatClientSwing() throws UnknownHostException {
         setLayout(new GridBagLayout());
         JMenuBar menuBar = new JMenuBar();
@@ -87,7 +88,7 @@ public class ChatClientSwing extends JFrame {
         this.setLocation(x, y);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Chat P2P - Redes de Computadores");
-        String nomeUsuario = JOptionPane.showInputDialog(this, "Digite seu nome de usuário: ");
+        String nomeUsuario = JOptionPane.showInputDialog(this, "Digite seu nome de usuario: ");
         this.meuUsuario = new Usuario(nomeUsuario, StatusUsuario.DISPONIVEL, InetAddress.getLocalHost());
         setVisible(true);
     }

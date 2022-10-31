@@ -2,23 +2,28 @@ package br.ufsm.csi.redes.Server;
 
 import br.ufsm.csi.redes.Interface.ChatClientSwing;
 import br.ufsm.csi.redes.Model.Mensagem;
-import br.ufsm.csi.redes.Model.Usuario;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
-import java.io.*;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Scanner;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
 
 public class MensagemRadar implements Runnable{
 
     private final static int porta = 8080;
+    private final static InetAddress endereco;
 
-    ServerSocket conexao = new ServerSocket(porta);
-    Socket conexaoCliente;
+    static {
+        try {
+            endereco = InetAddress.getByName("localhost");
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    DatagramSocket conexao = new DatagramSocket(porta, endereco);
 
     public MensagemRadar() throws IOException {
     }
@@ -27,9 +32,17 @@ public class MensagemRadar implements Runnable{
     @Override
     public void run() {
         while (true){
-            conexaoCliente = conexao.accept();
-            ObjectInputStream entrada = new ObjectInputStream(conexaoCliente.getInputStream());
-            System.out.print("\nMensagem detectada! | " +  entrada);
+            byte[] buffer = new byte[100];
+            DatagramPacket pacoteDetectado = new DatagramPacket(buffer, buffer.length);
+            conexao.setBroadcast(true);
+            conexao.receive(pacoteDetectado);
+
+//          ObjectMapper objectMapper = new ObjectMapper();
+            String stringMensagem = new String(pacoteDetectado.getData(), StandardCharsets.UTF_8);
+            System.out.println("Mensagem Detectada! | " + stringMensagem);
+
         }
     }
 }
+
+
