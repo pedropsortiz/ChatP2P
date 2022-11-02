@@ -14,6 +14,9 @@ public class Usuario {
         DISPONIVEL, NAO_PERTURBE, VOLTO_LOGO
     }
 
+    public Usuario() {
+    }
+
     public Usuario(String nome, ChatClientSwing.StatusUsuario status, InetAddress endereco) {
         this.nome = nome;
         this.status = status;

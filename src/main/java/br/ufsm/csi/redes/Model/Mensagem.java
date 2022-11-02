@@ -9,11 +9,13 @@ import java.io.Serializable;
 
 @Data
 @Builder
-@NoArgsConstructor
 public class Mensagem implements Serializable {
 
     private TipoMensagem tipoMensagem;
     private Usuario usuario;
+
+    public Mensagem() {
+    }
 
     public Mensagem(TipoMensagem tipoMensagem, Usuario usuario) {
         this.tipoMensagem = tipoMensagem;

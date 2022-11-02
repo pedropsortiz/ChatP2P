@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 
@@ -32,14 +33,15 @@ public class MensagemRadar implements Runnable{
     @Override
     public void run() {
         while (true){
-            byte[] buffer = new byte[100];
-            DatagramPacket pacoteDetectado = new DatagramPacket(buffer, buffer.length);
             conexao.setBroadcast(true);
+            byte[] buffer = new byte[conexao.getReceiveBufferSize()];
+            DatagramPacket pacoteDetectado = new DatagramPacket(buffer, buffer.length);
             conexao.receive(pacoteDetectado);
 
-//          ObjectMapper objectMapper = new ObjectMapper();
             String stringMensagem = new String(pacoteDetectado.getData(), StandardCharsets.UTF_8);
-            System.out.println("Mensagem Detectada! | " + stringMensagem);
+
+            Mensagem objMensagem = new ObjectMapper().readValue(stringMensagem, Mensagem.class);
+            System.out.println("Mensagem Detectada! | " + objMensagem);
 
         }
     }
