@@ -9,7 +9,7 @@ funcionalidades:**
   * Cada cliente de chat ao receber uma mensagem de radar (sonda), deve: 
     * cadastrar o usuário recebido na sua lista de usuários on-line, se ele já não existir;
     * atualizar o status do usuário;
-    * ~~ignorar mensagens de radar recebidas de si próprio~~;
+    * ignorar mensagens de radar recebidas de si próprio;
   * Os clientes deverão implementar uma função onde são enviadas mensagens de radar periódicos (cada 5s) em broadcast. Sempre que ficar sem receber mensagens de radar de um usuário por tempo superior a 30s, este usuário deve ser retirado da lista de usuários on-line.
 * Para qualquer usuário on-line é possível abrir um diálogo de chat. Este diálogo deve ser confiável e com entrega garantida.
 * É possível manter sessões de chat simultâneas com vários usuários através de janelas diferentes.
