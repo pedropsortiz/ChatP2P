@@ -46,7 +46,7 @@ public class MensagemRadar implements Runnable{
             Mensagem objMensagem = new ObjectMapper().readValue(stringMensagem, Mensagem.class);
 
             //Ignorando mensagens que são recebidas de localhost
-            if ((objMensagem.getUsuario().getEndereco().equals(InetAddress.getByName("localhost")))){
+            if (!(objMensagem.getUsuario().getEndereco().equals(InetAddress.getByName("localhost")))){
                 Usuario usuario = objMensagem.getUsuario();
                 System.out.println("Mensagem Detectada! | " + objMensagem);
             }
