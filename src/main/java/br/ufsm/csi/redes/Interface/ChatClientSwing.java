@@ -1,5 +1,7 @@
 package br.ufsm.csi.redes.Interface;
 
+import br.ufsm.csi.redes.Model.Usuario;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -89,7 +91,7 @@ public class ChatClientSwing extends JFrame {
         final int y = (screenSize.height - this.getHeight()) / 2;
         this.setLocation(x, y);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("Chat P2P - Redes de Computadores");
+        setTitle("Chat P2P");
         String nomeUsuario = JOptionPane.showInputDialog(this, "Digite seu nome de usuario: ");
         this.meuUsuario = new Usuario(nomeUsuario, StatusUsuario.DISPONIVEL, InetAddress.getLocalHost());
         setVisible(true);
@@ -113,6 +115,9 @@ public class ChatClientSwing extends JFrame {
             }
         });
         return listaChat;
+    }
+
+    public void add(br.ufsm.csi.redes.Model.Usuario pedro, GridBagConstraints gridBagConstraints) {
     }
 
 

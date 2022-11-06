@@ -40,22 +40,18 @@ public class MensagemRadar implements Runnable{
             byte[] buffer = new byte[conexao.getReceiveBufferSize()];
             DatagramPacket pacoteDetectado = new DatagramPacket(buffer, buffer.length);
             conexao.receive(pacoteDetectado);
+            InetAddress enderecoCliente = pacoteDetectado.getAddress();
 
             //Conversão do byte recebido para Mensagem
             String stringMensagem = new String(pacoteDetectado.getData(), StandardCharsets.UTF_8);
             Mensagem objMensagem = new ObjectMapper().readValue(stringMensagem, Mensagem.class);
 
             //Ignorando mensagens que são recebidas de localhost
-            if (!(objMensagem.getUsuario().getEndereco().equals(InetAddress.getByName("localhost")))){
+            // # Adicionar !
+            if ((objMensagem.getUsuario().getEndereco().equals(InetAddress.getByName("localhost")))){
                 Usuario usuario = objMensagem.getUsuario();
-                System.out.println("Mensagem Detectada! | " + objMensagem);
+                System.out.println("Mensagem Detectada!\nTipo da mensagem: " + objMensagem.getTipoMensagem() + "\nUsuário: " + usuario + "\nEndereço: "+ usuario.getEndereco() + "\n");
             }
-
         }
     }
 }
-
-//                DefaultListModel dfListModel = new DefaultListModel();
-//                dfListModel.addElement(objMensagem.getUsuario());
-//                JList listaChat = new JList(dfListModel);
-//                new ChatClientSwing().add(new JScrollPane(listaChat), new GridBagConstraints(0, 0, 1, 1, 0.1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));;
