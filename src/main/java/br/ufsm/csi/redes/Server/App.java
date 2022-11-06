@@ -7,6 +7,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.InetAddress;
 
+import static br.ufsm.csi.redes.Model.Usuario.StatusUsuario.DISPONIVEL;
+
 public class App {
 
     private final int porta = 8080;
@@ -21,7 +23,7 @@ public class App {
     public App() throws IOException {
         System.out.println(ANSI_START + "Iniciando broadcasting para o endereço " + endereco + ANSI_RESET);
         System.out.println(ANSI_START + "Escutando porta " + porta + ANSI_RESET + "\n");
-        new ChatClientSwing().add(new Usuario("Pedro", ChatClientSwing.StatusUsuario.DISPONIVEL, endereco), new GridBagConstraints(0, 0, 1, 1, 0.1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        new ChatClientSwing();
         new Thread(new MensagemRadar()).start();
         new Thread(new MensagemEnvio()).start();
 

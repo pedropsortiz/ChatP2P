@@ -9,6 +9,8 @@ import lombok.SneakyThrows;
 import java.io.IOException;
 import java.net.*;
 
+import static br.ufsm.csi.redes.Model.Usuario.StatusUsuario.DISPONIVEL;
+
 public class MensagemEnvio implements Runnable{
 
     private final static int porta = 8080;
@@ -23,7 +25,7 @@ public class MensagemEnvio implements Runnable{
         }
     }
 
-    Usuario usuario = new Usuario("Pedro", ChatClientSwing.StatusUsuario.DISPONIVEL, endereco);
+    Usuario usuario = new Usuario("Pedro", DISPONIVEL, endereco);
     Mensagem mensagem = Mensagem.builder().tipoMensagem( Mensagem.TipoMensagem.SONDA).usuario(usuario).build();
     String StringMensagem =  new ObjectMapper().writeValueAsString(mensagem);
     byte[] bArray = StringMensagem.getBytes("UTF-8");

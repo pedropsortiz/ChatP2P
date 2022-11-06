@@ -10,6 +10,8 @@ import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
 
+import static br.ufsm.csi.redes.Model.Usuario.StatusUsuario.*;
+
 public class ChatClientSwing extends JFrame {
 
     private Usuario meuUsuario;
@@ -26,32 +28,32 @@ public class ChatClientSwing extends JFrame {
         JMenu menu = new JMenu("Status");
 
         ButtonGroup group = new ButtonGroup();
-        JRadioButtonMenuItem rbMenuItem = new JRadioButtonMenuItem(StatusUsuario.DISPONIVEL.name());
+        JRadioButtonMenuItem rbMenuItem = new JRadioButtonMenuItem(Usuario.StatusUsuario.DISPONIVEL.name());
         rbMenuItem.setSelected(true);
         rbMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                ChatClientSwing.this.meuUsuario.setStatus(StatusUsuario.DISPONIVEL);
+                ChatClientSwing.this.meuUsuario.setStatus(DISPONIVEL);
             }
         });
         group.add(rbMenuItem);
         menu.add(rbMenuItem);
 
-        rbMenuItem = new JRadioButtonMenuItem(StatusUsuario.NAO_PERTURBE.name());
+        rbMenuItem = new JRadioButtonMenuItem(Usuario.StatusUsuario.NAO_PERTURBE.name());
         rbMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                ChatClientSwing.this.meuUsuario.setStatus(StatusUsuario.NAO_PERTURBE);
+                ChatClientSwing.this.meuUsuario.setStatus(NAO_PERTURBE);
             }
         });
         group.add(rbMenuItem);
         menu.add(rbMenuItem);
 
-        rbMenuItem = new JRadioButtonMenuItem(StatusUsuario.VOLTO_LOGO.name());
+        rbMenuItem = new JRadioButtonMenuItem(Usuario.StatusUsuario.VOLTO_LOGO.name());
         rbMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                ChatClientSwing.this.meuUsuario.setStatus(StatusUsuario.VOLTO_LOGO);
+                ChatClientSwing.this.meuUsuario.setStatus(VOLTO_LOGO);
             }
         });
         group.add(rbMenuItem);
@@ -82,7 +84,6 @@ public class ChatClientSwing extends JFrame {
             }
         });
 
-        //add(new JScrollPane(criaLista()), new GridBagConstraints(0, 0, 1, 1, 0.1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         add(new JScrollPane(new JList()), new GridBagConstraints(0, 0, 1, 1, 0.1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         add(tabbedPane, new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         setSize(800, 600);
@@ -93,33 +94,9 @@ public class ChatClientSwing extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Chat P2P");
         String nomeUsuario = JOptionPane.showInputDialog(this, "Digite seu nome de usuario: ");
-        this.meuUsuario = new Usuario(nomeUsuario, StatusUsuario.DISPONIVEL, InetAddress.getLocalHost());
+        this.meuUsuario = new Usuario(nomeUsuario, DISPONIVEL, InetAddress.getLocalHost());
         setVisible(true);
     }
-
-    private JComponent criaLista() {
-        dfListModel = new DefaultListModel();
-        dfListModel.addElement(new Usuario("Fulano", StatusUsuario.NAO_PERTURBE, null));
-        dfListModel.addElement(new Usuario("Cicrano", StatusUsuario.DISPONIVEL, null));
-        listaChat = new JList(dfListModel);
-        listaChat.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent evt) {
-                JList list = (JList) evt.getSource();
-                if (evt.getClickCount() == 2) {
-                    int index = list.locationToIndex(evt.getPoint());
-                    Usuario user = (Usuario) list.getModel().getElementAt(index);
-                    if (chatsAbertos.add(user)) {
-                        tabbedPane.add(user.toString(), new PainelChatPVT(user));
-                    }
-                }
-            }
-        });
-        return listaChat;
-    }
-
-    public void add(br.ufsm.csi.redes.Model.Usuario pedro, GridBagConstraints gridBagConstraints) {
-    }
-
 
     class PainelChatPVT extends JPanel {
 
@@ -152,72 +129,6 @@ public class ChatClientSwing extends JFrame {
             this.usuario = usuario;
         }
 
-    }
-
-    public static void main(String[] args) throws UnknownHostException {
-        new ChatClientSwing();
-
-    }
-
-    public enum StatusUsuario {
-        DISPONIVEL, NAO_PERTURBE, VOLTO_LOGO
-    }
-
-    public class Usuario {
-
-        private String nome;
-        private StatusUsuario status;
-        private InetAddress endereco;
-
-        public Usuario(String nome, StatusUsuario status, InetAddress endereco) {
-            this.nome = nome;
-            this.status = status;
-            this.endereco = endereco;
-        }
-
-        public String getNome() {
-            return nome;
-        }
-
-        public void setNome(String nome) {
-            this.nome = nome;
-        }
-
-        public StatusUsuario getStatus() {
-            return status;
-        }
-
-        public void setStatus(StatusUsuario status) {
-            this.status = status;
-        }
-
-        public InetAddress getEndereco() {
-            return endereco;
-        }
-
-        public void setEndereco(InetAddress endereco) {
-            this.endereco = endereco;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Usuario usuario = (Usuario) o;
-
-            return nome.equals(usuario.nome);
-
-        }
-
-        @Override
-        public int hashCode() {
-            return nome.hashCode();
-        }
-
-        public String toString() {
-            return this.getNome() + " (" + getStatus().toString() + ")";
-        }
     }
 
 }

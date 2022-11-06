@@ -7,7 +7,7 @@ import java.net.InetAddress;
 public class Usuario {
 
     private String nome;
-    private ChatClientSwing.StatusUsuario status;
+    private StatusUsuario status;
     private InetAddress endereco;
 
     public enum StatusUsuario {
@@ -17,7 +17,7 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String nome, ChatClientSwing.StatusUsuario status, InetAddress endereco) {
+    public Usuario(String nome, StatusUsuario status, InetAddress endereco) {
         this.nome = nome;
         this.status = status;
         this.endereco = endereco;
@@ -31,11 +31,11 @@ public class Usuario {
         this.nome = nome;
     }
 
-    public ChatClientSwing.StatusUsuario getStatus() {
+    public StatusUsuario getStatus() {
         return status;
     }
 
-    public void setStatus(ChatClientSwing.StatusUsuario status) {
+    public void setStatus(StatusUsuario status) {
         this.status = status;
     }
 
@@ -45,6 +45,17 @@ public class Usuario {
 
     public void setEndereco(InetAddress endereco) {
         this.endereco = endereco;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Usuario usuario = (Usuario) o;
+
+        return nome.equals(usuario.getNome());
+
     }
 
     @Override
