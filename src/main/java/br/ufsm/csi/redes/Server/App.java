@@ -1,13 +1,9 @@
 package br.ufsm.csi.redes.Server;
 import br.ufsm.csi.redes.Interface.ChatClientSwing;
-import br.ufsm.csi.redes.Model.Usuario;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.net.InetAddress;
 
-import static br.ufsm.csi.redes.Model.Usuario.StatusUsuario.DISPONIVEL;
 
 public class App {
 

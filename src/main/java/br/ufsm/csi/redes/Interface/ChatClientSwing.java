@@ -14,12 +14,9 @@ import static br.ufsm.csi.redes.Model.Usuario.StatusUsuario.*;
 
 public class ChatClientSwing extends JFrame {
 
-    private Usuario meuUsuario;
-    private final String endBroadcast = "255.255.255.255";
-    private JList listaChat;
-    private DefaultListModel dfListModel;
-    private JTabbedPane tabbedPane = new JTabbedPane();
-    private Set<Usuario> chatsAbertos = new HashSet<>();
+    private final Usuario meuUsuario;
+    private final JTabbedPane tabbedPane = new JTabbedPane();
+    private final Set<Usuario> chatsAbertos = new HashSet<>();
 
 
     public ChatClientSwing() throws UnknownHostException {
@@ -84,7 +81,7 @@ public class ChatClientSwing extends JFrame {
             }
         });
 
-        add(new JScrollPane(new JList()), new GridBagConstraints(0, 0, 1, 1, 0.1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        add(new JScrollPane(new JList<>()), new GridBagConstraints(0, 0, 1, 1, 0.1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         add(tabbedPane, new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         setSize(800, 600);
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -123,10 +120,6 @@ public class ChatClientSwing extends JFrame {
 
         public Usuario getUsuario() {
             return usuario;
-        }
-
-        public void setUsuario(Usuario usuario) {
-            this.usuario = usuario;
         }
 
     }
