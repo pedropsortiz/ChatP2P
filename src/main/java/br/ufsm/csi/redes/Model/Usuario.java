@@ -1,9 +1,12 @@
 package br.ufsm.csi.redes.Model;
-
-import br.ufsm.csi.redes.Interface.ChatClientSwing;
-
+import lombok.*;
 import java.net.InetAddress;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Usuario {
 
     private String nome;
@@ -12,39 +15,6 @@ public class Usuario {
 
     public enum StatusUsuario {
         DISPONIVEL, NAO_PERTURBE, VOLTO_LOGO
-    }
-
-    public Usuario() {
-    }
-
-    public Usuario(String nome, StatusUsuario status, InetAddress endereco) {
-        this.nome = nome;
-        this.status = status;
-        this.endereco = endereco;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public StatusUsuario getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusUsuario status) {
-        this.status = status;
-    }
-
-    public InetAddress getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(InetAddress endereco) {
-        this.endereco = endereco;
     }
 
     @Override
