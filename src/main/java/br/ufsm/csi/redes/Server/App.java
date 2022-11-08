@@ -22,6 +22,5 @@ public class App {
         new ChatClientSwing();
         new Thread(new MensagemRadar()).start();
         new Thread(new MensagemEnvio()).start();
-
     }
 }
