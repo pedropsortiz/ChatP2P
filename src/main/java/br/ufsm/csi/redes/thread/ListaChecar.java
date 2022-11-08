@@ -12,7 +12,7 @@ import javax.swing.*;
 public class ListaChecar implements Runnable{
 
     public ChatClientSwing janela;
-    private final static int tempoDormir = 15000; //16 segundos
+    private final static int tempoDormir = 15000; //15 segundos
 
     @SneakyThrows
     @Override

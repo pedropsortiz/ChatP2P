@@ -25,11 +25,11 @@ public class MensagemRadar implements Runnable{
         }
     }
 
-    DatagramSocket conexao = new DatagramSocket(porta, endereco);
-
     public MensagemRadar(ChatClientSwing janela) throws IOException {
         this.janela = janela;
     }
+
+    DatagramSocket conexao = new DatagramSocket(porta, endereco);
 
     @SneakyThrows
     @Override
