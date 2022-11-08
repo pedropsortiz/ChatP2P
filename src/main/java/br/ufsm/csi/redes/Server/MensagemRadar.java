@@ -1,18 +1,14 @@
 package br.ufsm.csi.redes.Server;
 
-import br.ufsm.csi.redes.Interface.ChatClientSwing;
-import br.ufsm.csi.redes.Model.Mensagem;
-import br.ufsm.csi.redes.Model.Usuario;
+import br.ufsm.csi.redes.Model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import lombok.SneakyThrows;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MensagemRadar implements Runnable{
 
@@ -28,6 +24,7 @@ public class MensagemRadar implements Runnable{
     }
 
     DatagramSocket conexao = new DatagramSocket(porta, endereco);
+    List<Usuario> listaUsuariosConectados = new ArrayList<Usuario>();
 
     public MensagemRadar() throws IOException {
     }
@@ -40,7 +37,6 @@ public class MensagemRadar implements Runnable{
             byte[] buffer = new byte[conexao.getReceiveBufferSize()];
             DatagramPacket pacoteDetectado = new DatagramPacket(buffer, buffer.length);
             conexao.receive(pacoteDetectado);
-            InetAddress enderecoCliente = pacoteDetectado.getAddress();
 
             //Conversão do byte recebido para Mensagem
             String stringMensagem = new String(pacoteDetectado.getData(), StandardCharsets.UTF_8);
@@ -50,7 +46,12 @@ public class MensagemRadar implements Runnable{
             // # Adicionar !
             if ((objMensagem.getUsuario().getEndereco().equals(InetAddress.getByName("localhost")))){
                 Usuario usuario = objMensagem.getUsuario();
-                System.out.println("Mensagem Detectada!\nTipo da mensagem: " + objMensagem.getTipoMensagem() + "\nUsuário: " + usuario + "\nEndereço: "+ usuario.getEndereco() + "\n");
+                if (!(listaUsuariosConectados.contains(usuario))){
+                    listaUsuariosConectados.add(usuario);
+                    System.out.println("Mensagem Detectada!\nTipo da mensagem: " + objMensagem.getTipoMensagem() + "\nUsuário: " + usuario + "\nEndereço: "+ usuario.getEndereco() + "\n");
+                } else {
+                    System.out.println(listaUsuariosConectados);
+                }
             }
         }
     }

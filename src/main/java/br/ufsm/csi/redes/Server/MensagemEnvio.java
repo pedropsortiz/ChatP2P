@@ -1,8 +1,6 @@
 package br.ufsm.csi.redes.Server;
 
-import br.ufsm.csi.redes.Interface.ChatClientSwing;
-import br.ufsm.csi.redes.Model.Mensagem;
-import br.ufsm.csi.redes.Model.Usuario;
+import br.ufsm.csi.redes.Model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 
