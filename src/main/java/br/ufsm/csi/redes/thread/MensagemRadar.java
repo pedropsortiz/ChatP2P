@@ -54,7 +54,7 @@ public class MensagemRadar implements Runnable{
                     System.out.println("Mensagem Detectada!\nTipo da mensagem: " + objMensagem.getTipoMensagem() + "\nUsuário: " + usuario + "\nEndereço: "+ usuario.getEndereco() + "\n");
                 } else{
                     janela.atualizarUsuario(usuario);
-                    System.out.println("Usuário atualizado com sucesso!\nTempo atual da última conexão: " + (usuario.getUltimoAcesso() / 1000) + "\n");
+                    System.out.println("Usuário atualizado com sucesso!\nStatus atualizado: " + usuario.getStatus() + "\nTempo atual da última conexão: " + (usuario.getUltimoAcesso() / 1000) + "\n");
                 }
             }
         }

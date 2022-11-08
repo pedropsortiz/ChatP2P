@@ -32,7 +32,7 @@ public class MensagemEnvio implements Runnable{
     @Override
     public void run() {
         while (true){
-            Usuario usuario = new Usuario(janela.retornarNomeUsuario(), DISPONIVEL, endereco, System.currentTimeMillis());
+            Usuario usuario = new Usuario(janela.retornarNomeUsuario(), janela.retornarStatusUsuario(), endereco, System.currentTimeMillis());
             Mensagem mensagem = Mensagem.builder().tipoMensagem( Mensagem.TipoMensagem.SONDA).usuario(usuario).build();
             String StringMensagem =  new ObjectMapper().writeValueAsString(mensagem);
             byte[] bArray = StringMensagem.getBytes("UTF-8");

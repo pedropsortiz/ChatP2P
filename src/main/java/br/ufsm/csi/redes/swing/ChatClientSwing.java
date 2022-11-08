@@ -138,6 +138,10 @@ public class ChatClientSwing extends JFrame {
         return this.meuUsuario.getNome();
     }
 
+    public Usuario.StatusUsuario retornarStatusUsuario(){
+        return this.meuUsuario.getStatus();
+    }
+
     class PainelChatPVT extends JPanel {
 
         JTextArea areaChat;
