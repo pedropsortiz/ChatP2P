@@ -1,4 +1,4 @@
-package br.ufsm.csi.redes.Model;
+package br.ufsm.csi.redes.model;
 import lombok.*;
 import java.io.Serializable;
 

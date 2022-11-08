@@ -1,4 +1,4 @@
-package br.ufsm.csi.redes.Model;
+package br.ufsm.csi.redes.model;
 import lombok.*;
 import java.net.InetAddress;
 
@@ -12,6 +12,7 @@ public class Usuario {
     private String nome;
     private StatusUsuario status;
     private InetAddress endereco;
+    private Long ultimoAcesso;
 
     public enum StatusUsuario {
         DISPONIVEL, NAO_PERTURBE, VOLTO_LOGO

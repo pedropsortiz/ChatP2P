@@ -1,6 +1,5 @@
-package br.ufsm.csi.redes.Interface;
-
-import br.ufsm.csi.redes.Model.Usuario;
+package br.ufsm.csi.redes.swing;
+import br.ufsm.csi.redes.model.Usuario;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,14 +9,23 @@ import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static br.ufsm.csi.redes.Model.Usuario.StatusUsuario.*;
+import static br.ufsm.csi.redes.model.Usuario.StatusUsuario.*;
 
+/**
+ *
+ * User: Rafael
+ * Date: 13/10/14
+ * Time: 10:28
+ *
+ */
 public class ChatClientSwing extends JFrame {
 
-    private final Usuario meuUsuario;
-    private final JTabbedPane tabbedPane = new JTabbedPane();
-    private final Set<Usuario> chatsAbertos = new HashSet<>();
-
+    private Usuario meuUsuario;
+    private final String endBroadcast = "255.255.255.255";
+    private JList listaChat;
+    private DefaultListModel dfListModel;
+    private JTabbedPane tabbedPane = new JTabbedPane();
+    private Set<Usuario> chatsAbertos = new HashSet<>();
 
     public ChatClientSwing() throws UnknownHostException {
         setLayout(new GridBagLayout());
@@ -25,7 +33,7 @@ public class ChatClientSwing extends JFrame {
         JMenu menu = new JMenu("Status");
 
         ButtonGroup group = new ButtonGroup();
-        JRadioButtonMenuItem rbMenuItem = new JRadioButtonMenuItem(Usuario.StatusUsuario.DISPONIVEL.name());
+        JRadioButtonMenuItem rbMenuItem = new JRadioButtonMenuItem(DISPONIVEL.name());
         rbMenuItem.setSelected(true);
         rbMenuItem.addActionListener(new ActionListener() {
             @Override
@@ -36,7 +44,7 @@ public class ChatClientSwing extends JFrame {
         group.add(rbMenuItem);
         menu.add(rbMenuItem);
 
-        rbMenuItem = new JRadioButtonMenuItem(Usuario.StatusUsuario.NAO_PERTURBE.name());
+        rbMenuItem = new JRadioButtonMenuItem(NAO_PERTURBE.name());
         rbMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -46,7 +54,7 @@ public class ChatClientSwing extends JFrame {
         group.add(rbMenuItem);
         menu.add(rbMenuItem);
 
-        rbMenuItem = new JRadioButtonMenuItem(Usuario.StatusUsuario.VOLTO_LOGO.name());
+        rbMenuItem = new JRadioButtonMenuItem(VOLTO_LOGO.name());
         rbMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -80,8 +88,7 @@ public class ChatClientSwing extends JFrame {
                 }
             }
         });
-
-        add(new JScrollPane(new JList<>()), new GridBagConstraints(0, 0, 1, 1, 0.1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        add(new JScrollPane(criaLista()), new GridBagConstraints(0, 0, 1, 1, 0.1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         add(tabbedPane, new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         setSize(800, 600);
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -89,10 +96,49 @@ public class ChatClientSwing extends JFrame {
         final int y = (screenSize.height - this.getHeight()) / 2;
         this.setLocation(x, y);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("Chat P2P");
-        String nomeUsuario = JOptionPane.showInputDialog(this, "Digite seu nome de usuario: ");
-        this.meuUsuario = new Usuario(nomeUsuario, DISPONIVEL, InetAddress.getLocalHost());
+        setTitle("Chat P2P - Redes de Computadores");
+        String nomeUsuario = JOptionPane.showInputDialog(this, "Digite seu nickname: ");
+        this.meuUsuario = new Usuario(nomeUsuario, DISPONIVEL, InetAddress.getLocalHost(), null);
         setVisible(true);
+    }
+
+    private JComponent criaLista() {
+        dfListModel = new DefaultListModel();
+        listaChat = new JList(dfListModel);
+        listaChat.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                JList list = (JList) evt.getSource();
+                if (evt.getClickCount() == 2) {
+                    int index = list.locationToIndex(evt.getPoint());
+                    Usuario user = (Usuario) list.getModel().getElementAt(index);
+                    if (chatsAbertos.add(user)) {
+                        tabbedPane.add(user.toString(), new PainelChatPVT(user));
+                    }
+                }
+            }
+        });
+        return listaChat;
+    }
+
+    public void adicionaUsuario(Usuario usuario){
+        dfListModel.addElement(usuario);
+    }
+
+    public void removeUsuario(Usuario usuario){
+        dfListModel.removeElement(usuario);
+    }
+
+    public DefaultListModel retornarListaUsuarios(){
+        return dfListModel;
+    }
+
+    public void atualizarUsuario(Usuario usuario){
+        int usuarioIndex = dfListModel.indexOf(usuario);
+        dfListModel.set(usuarioIndex, usuario);
+    }
+
+    public String retornarNomeUsuario(){
+        return this.meuUsuario.getNome();
     }
 
     class PainelChatPVT extends JPanel {
@@ -107,12 +153,9 @@ public class ChatClientSwing extends JFrame {
             this.usuario = usuario;
             areaChat.setEditable(false);
             campoEntrada = new JTextField();
-            campoEntrada.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    ((JTextField) e.getSource()).setText("");
-                    areaChat.append(meuUsuario.getNome() + "> " + e.getActionCommand() + "\n");
-                }
+            campoEntrada.addActionListener(e -> {
+                ((JTextField) e.getSource()).setText("");
+                areaChat.append(meuUsuario.getNome() + "> " + e.getActionCommand() + "\n");
             });
             add(new JScrollPane(areaChat), new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
             add(campoEntrada, new GridBagConstraints(0, 1, 1, 1, 1, 0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
@@ -121,6 +164,15 @@ public class ChatClientSwing extends JFrame {
         public Usuario getUsuario() {
             return usuario;
         }
+
+        public void setUsuario(Usuario usuario) {
+            this.usuario = usuario;
+        }
+
+    }
+
+    public static void main(String[] args) throws UnknownHostException {
+        new ChatClientSwing();
 
     }
 
