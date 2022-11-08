@@ -73,15 +73,12 @@ public class ChatClientSwing extends JFrame {
                 super.mousePressed(e);
                 if (e.getButton() == MouseEvent.BUTTON3) {
                     JPopupMenu popupMenu =  new JPopupMenu();
-                    final int tab = tabbedPane.getUI().tabForCoordinate(tabbedPane, e.getX(), e.getY());
+                    int tab = tabbedPane.getUI().tabForCoordinate(tabbedPane, e.getX(), e.getY());
                     JMenuItem item = new JMenuItem("Fechar");
-                    item.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            PainelChatPVT painel = (PainelChatPVT) tabbedPane.getTabComponentAt(tab);
-                            tabbedPane.remove(tab);
-                            chatsAbertos.remove(painel.getUsuario());
-                        }
+                    item.addActionListener(e1 -> {
+                        PainelChatPVT painel = (PainelChatPVT) tabbedPane.getComponentAt(tab);
+                        chatsAbertos.remove(painel.getUsuario());
+                        tabbedPane.remove(tab);
                     });
                     popupMenu.add(item);
                     popupMenu.show(e.getComponent(), e.getX(), e.getY());
