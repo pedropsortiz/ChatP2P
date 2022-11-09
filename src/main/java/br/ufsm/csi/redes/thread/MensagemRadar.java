@@ -43,8 +43,8 @@ public class MensagemRadar implements Runnable{
             Pacote objPacote = new ObjectMapper().readValue(stringMensagem, Pacote.class);
 
             // Ignorando mensagens que são recebidas de localhost
-            // # Adicionar !
-            if ((objPacote.getUsuario().getEndereco().equals(InetAddress.getLocalHost()))){
+            //TODO: Descomentar barramento de pacotes do localhost
+            //if (!(objPacote.getUsuario().getEndereco().equals(InetAddress.getLocalHost()))){
                 Usuario usuario = objPacote.getUsuario();
                 usuario.setUltimoAcesso(System.currentTimeMillis());
                 if (!(janela.retornarListaUsuarios().contains(usuario))){
@@ -55,7 +55,7 @@ public class MensagemRadar implements Runnable{
                     janela.atualizarUsuario(usuario);
                     System.out.println("Usuário atualizado com sucesso!\nStatus atualizado: " + usuario.getStatus() + "\nTempo atual da última conexão: " + (usuario.getUltimoAcesso() / 1000) + "\n");
                 }
-            }
+            //}
         }
     }
 }

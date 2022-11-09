@@ -26,6 +26,7 @@ public class MensagemTeste implements Runnable{
             throw new RuntimeException(e);
         }
     }
+
     private final static int tempoDormir= 5000; //5 segundos
 
     @SneakyThrows
