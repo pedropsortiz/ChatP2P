@@ -8,8 +8,6 @@ import lombok.SneakyThrows;
 import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MensagemRadar implements Runnable{
 
@@ -19,7 +17,7 @@ public class MensagemRadar implements Runnable{
 
     static {
         try {
-            endereco = InetAddress.getByName("localhost");
+            endereco = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
@@ -40,18 +38,19 @@ public class MensagemRadar implements Runnable{
             DatagramPacket pacoteDetectado = new DatagramPacket(buffer, buffer.length);
             conexao.receive(pacoteDetectado);
 
-            // Conversão do byte recebido para Mensagem
+            // Conversão do byte recebido para Pacote
             String stringMensagem = new String(pacoteDetectado.getData(), StandardCharsets.UTF_8);
-            Mensagem objMensagem = new ObjectMapper().readValue(stringMensagem, Mensagem.class);
+            Pacote objPacote = new ObjectMapper().readValue(stringMensagem, Pacote.class);
 
             // Ignorando mensagens que são recebidas de localhost
             // # Adicionar !
-            if ((objMensagem.getUsuario().getEndereco().equals(InetAddress.getByName("localhost")))){
-                Usuario usuario = objMensagem.getUsuario();
+            if ((objPacote.getUsuario().getEndereco().equals(InetAddress.getLocalHost()))){
+                Usuario usuario = objPacote.getUsuario();
                 usuario.setUltimoAcesso(System.currentTimeMillis());
                 if (!(janela.retornarListaUsuarios().contains(usuario))){
                     janela.adicionaUsuario(usuario);
-                    System.out.println("Mensagem Detectada!\nTipo da mensagem: " + objMensagem.getTipoMensagem() + "\nUsuário: " + usuario + "\nEndereço: "+ usuario.getEndereco() + "\n");
+                    //Estabelecer conexão com o TCP nesse ponto
+                    System.out.println("Pacote Detectada!\nTipo da mensagem: " + objPacote.getTipoMensagem() + "\nUsuário: " + usuario + "\nEndereço: "+ usuario.getEndereco() + "\n");
                 } else{
                     janela.atualizarUsuario(usuario);
                     System.out.println("Usuário atualizado com sucesso!\nStatus atualizado: " + usuario.getStatus() + "\nTempo atual da última conexão: " + (usuario.getUltimoAcesso() / 1000) + "\n");

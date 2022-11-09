@@ -1,7 +1,5 @@
 package br.ufsm.csi.redes.model;
-
 import lombok.*;
-
 import java.io.Serializable;
 
 @Getter
@@ -10,9 +8,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 @Builder
-public class Mensagem implements Serializable {
+public class Pacote implements Serializable {
 
-    private String mensagemTexto;
+    private TipoPacote tipoMensagem;
     private Usuario usuario;
+    public enum TipoPacote { SONDA }
 
 }

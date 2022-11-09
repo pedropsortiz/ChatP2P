@@ -8,8 +8,6 @@ import lombok.SneakyThrows;
 import java.io.IOException;
 import java.net.*;
 
-import static br.ufsm.csi.redes.model.Usuario.StatusUsuario.DISPONIVEL;
-
 public class MensagemEnvio implements Runnable{
 
     private final static int porta = 8080;
@@ -19,7 +17,7 @@ public class MensagemEnvio implements Runnable{
 
     static {
         try {
-            endereco = InetAddress.getByName("localhost");
+            endereco = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
@@ -33,8 +31,8 @@ public class MensagemEnvio implements Runnable{
     public void run() {
         while (true){
             Usuario usuario = new Usuario(janela.retornarNomeUsuario(), janela.retornarStatusUsuario(), endereco, System.currentTimeMillis());
-            Mensagem mensagem = Mensagem.builder().tipoMensagem( Mensagem.TipoMensagem.SONDA).usuario(usuario).build();
-            String StringMensagem =  new ObjectMapper().writeValueAsString(mensagem);
+            Pacote pacote = Pacote.builder().tipoMensagem( Pacote.TipoPacote.SONDA).usuario(usuario).build();
+            String StringMensagem =  new ObjectMapper().writeValueAsString(pacote);
             byte[] bArray = StringMensagem.getBytes("UTF-8");
 
             DatagramSocket conexao = new DatagramSocket();

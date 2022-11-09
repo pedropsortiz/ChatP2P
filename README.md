@@ -5,8 +5,8 @@ Projeto de criação de um ChatP2P na linguagem Java que implemente as funções
 funcionalidades:**
 
 * Descoberta de usuários on-line na mesma sub-rede através do algoritmo:
-  * Envia datagramas UDP de sonda contendo o seu nome de usuário e status para todos os endereços da sub-rede através do endereço de broadcast da sub-rede. Quando algum endereço enviar também uma mensagem de sonda, cadastrar ele na lista de usuários on-line, com o seu devido status;
-  * Cada cliente de chat ao receber uma mensagem de radar (sonda), deve: 
+  * Envia datagramas UDP de sonda contendo o seu nome de usuário e status para todos os endereços da sub-rede através do endereço de broadcast da sub-rede. Quando algum endereço enviar também uma pacote de sonda, cadastrar ele na lista de usuários on-line, com o seu devido status;
+  * Cada cliente de chat ao receber uma pacote de radar (sonda), deve: 
     * cadastrar o usuário recebido na sua lista de usuários on-line, se ele já não existir;
     * atualizar o status do usuário;
     * ignorar mensagens de radar recebidas de si próprio;

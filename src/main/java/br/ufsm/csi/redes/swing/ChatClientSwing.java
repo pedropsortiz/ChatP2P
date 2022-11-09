@@ -1,5 +1,7 @@
 package br.ufsm.csi.redes.swing;
+import br.ufsm.csi.redes.model.Mensagem;
 import br.ufsm.csi.redes.model.Usuario;
+import br.ufsm.csi.redes.thread.PeerThread;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +22,7 @@ import static br.ufsm.csi.redes.model.Usuario.StatusUsuario.*;
  */
 public class ChatClientSwing extends JFrame {
 
-    private Usuario meuUsuario;
+    private Usuario meuUsuario = new Usuario();
     private final String endBroadcast = "255.255.255.255";
     private JList listaChat;
     private DefaultListModel dfListModel;
@@ -64,7 +66,6 @@ public class ChatClientSwing extends JFrame {
         group.add(rbMenuItem);
         menu.add(rbMenuItem);
 
-        menuBar.add(menu);
         this.setJMenuBar(menuBar);
 
         tabbedPane.addMouseListener(new MouseAdapter() {
@@ -79,6 +80,7 @@ public class ChatClientSwing extends JFrame {
                         PainelChatPVT painel = (PainelChatPVT) tabbedPane.getComponentAt(tab);
                         chatsAbertos.remove(painel.getUsuario());
                         tabbedPane.remove(tab);
+                        System.out.println("Desconectar user " + meuUsuario.getEndereco() + " e user " + painel.getUsuario().getEndereco());
                     });
                     popupMenu.add(item);
                     popupMenu.show(e.getComponent(), e.getX(), e.getY());
@@ -97,6 +99,8 @@ public class ChatClientSwing extends JFrame {
         String nomeUsuario = JOptionPane.showInputDialog(this, "Digite seu nickname: ");
         this.meuUsuario = new Usuario(nomeUsuario, DISPONIVEL, InetAddress.getLocalHost(), null);
         setVisible(true);
+        menuBar.add(new JMenu(meuUsuario.getNome()));
+        menuBar.add(menu);
     }
 
     private JComponent criaLista() {
@@ -157,6 +161,8 @@ public class ChatClientSwing extends JFrame {
             campoEntrada.addActionListener(e -> {
                 ((JTextField) e.getSource()).setText("");
                 areaChat.append(meuUsuario.getNome() + "> " + e.getActionCommand() + "\n");
+                Mensagem mensagemUsuario = new Mensagem(e.getActionCommand(), meuUsuario);
+                new Thread(new PeerThread(mensagemUsuario, usuario)).start();
             });
             add(new JScrollPane(areaChat), new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
             add(campoEntrada, new GridBagConstraints(0, 1, 1, 1, 1, 0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
