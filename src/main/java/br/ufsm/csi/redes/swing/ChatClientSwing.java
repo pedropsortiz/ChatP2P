@@ -80,7 +80,7 @@ public class ChatClientSwing extends JFrame {
                         PainelChatPVT painel = (PainelChatPVT) tabbedPane.getComponentAt(tab);
                         chatsAbertos.remove(painel.getUsuario());
                         tabbedPane.remove(tab);
-                        System.out.println("Desconectar user " + meuUsuario.getEndereco() + " e user " + painel.getUsuario().getEndereco());
+                        //TODO: Desconectar o meuUsuário com o Usuário desligado
                     });
                     popupMenu.add(item);
                     popupMenu.show(e.getComponent(), e.getX(), e.getY());
@@ -113,6 +113,7 @@ public class ChatClientSwing extends JFrame {
                     int index = list.locationToIndex(evt.getPoint());
                     Usuario user = (Usuario) list.getModel().getElementAt(index);
                     if (chatsAbertos.add(user)) {
+                        //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
                         tabbedPane.add(user.toString(), new PainelChatPVT(user));
                     }
                 }
@@ -162,6 +163,7 @@ public class ChatClientSwing extends JFrame {
                 ((JTextField) e.getSource()).setText("");
                 areaChat.append(meuUsuario.getNome() + "> " + e.getActionCommand() + "\n");
                 Mensagem mensagemUsuario = new Mensagem(e.getActionCommand(), meuUsuario);
+                // TODO: Enviar a mensagem do usuário remetente ao destinatário
                 new Thread(new PeerThread(mensagemUsuario, usuario)).start();
             });
             add(new JScrollPane(areaChat), new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));

@@ -1,6 +1,5 @@
 package br.ufsm.csi.redes.server;
 import br.ufsm.csi.redes.swing.ChatClientSwing;
-import br.ufsm.csi.redes.test.MensagemEnvioTeste;
 import br.ufsm.csi.redes.thread.ListaChecar;
 import br.ufsm.csi.redes.thread.MensagemEnvio;
 import br.ufsm.csi.redes.thread.MensagemRadar;
@@ -21,13 +20,15 @@ public class App {
     }
 
     public App() throws IOException {
+
+        //Iniciando janela da aplicação
+        ChatClientSwing janela = new ChatClientSwing();
+
         System.out.println(ANSI_START + "Iniciando broadcasting para o endereço " + endereco + ANSI_RESET);
         System.out.println(ANSI_START + "Escutando porta " + porta + ANSI_RESET + "\n");
-        ChatClientSwing janela = new ChatClientSwing();
-        new Thread(new MensagemEnvio(janela)).start();
-        new Thread(new MensagemEnvioTeste(janela)).start();
-        new Thread(new MensagemRadar(janela)).start();
-        new Thread(new ListaChecar(janela)).start();
         new Thread(new Servidor()).start();
+        new Thread(new MensagemRadar(janela)).start();
+        new Thread(new MensagemEnvio(janela)).start();
+        new Thread(new ListaChecar(janela)).start();
     }
 }
