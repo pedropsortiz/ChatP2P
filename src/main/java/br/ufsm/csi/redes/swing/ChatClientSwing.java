@@ -87,6 +87,7 @@ public class ChatClientSwing extends JFrame {
                 }
             }
         });
+        //
         add(new JScrollPane(criaLista()), new GridBagConstraints(0, 0, 1, 1, 0.1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         add(tabbedPane, new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         setSize(800, 600);
@@ -95,11 +96,11 @@ public class ChatClientSwing extends JFrame {
         final int y = (screenSize.height - this.getHeight()) / 2;
         this.setLocation(x, y);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("Chat P2P - Redes de Computadores");
+        setTitle("\uD83E\uDDD1\u200D\uD83D\uDCBB Chat P2P - Redes de Computadores");
         String nomeUsuario = JOptionPane.showInputDialog(this, "Digite seu nickname: ");
         this.meuUsuario = new Usuario(nomeUsuario, DISPONIVEL, InetAddress.getLocalHost(), null);
         setVisible(true);
-        menuBar.add(new JMenu(meuUsuario.getNome()));
+        menuBar.add(new JMenu("\uD83E\uDD20 - " + meuUsuario.getNome()));
         menuBar.add(menu);
     }
 
