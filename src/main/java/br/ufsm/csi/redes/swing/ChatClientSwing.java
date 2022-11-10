@@ -1,15 +1,18 @@
 package br.ufsm.csi.redes.swing;
 import br.ufsm.csi.redes.model.Mensagem;
 import br.ufsm.csi.redes.model.Usuario;
-import br.ufsm.csi.redes.thread.PeerThread;
+import br.ufsm.csi.redes.thread.ClienteThread;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Spliterator;
 
 import static br.ufsm.csi.redes.model.Usuario.StatusUsuario.*;
 
@@ -27,7 +30,7 @@ public class ChatClientSwing extends JFrame {
     private JList listaChat;
     private DefaultListModel dfListModel;
     private JTabbedPane tabbedPane = new JTabbedPane();
-    private Set<Usuario> chatsAbertos = new HashSet<>();
+    private ArrayList<ArrayList> chatsAbertos = new ArrayList<>();
 
     public ChatClientSwing() throws UnknownHostException {
         setLayout(new GridBagLayout());
@@ -78,7 +81,16 @@ public class ChatClientSwing extends JFrame {
                     JMenuItem item = new JMenuItem("Fechar");
                     item.addActionListener(e1 -> {
                         PainelChatPVT painel = (PainelChatPVT) tabbedPane.getComponentAt(tab);
-                        chatsAbertos.remove(painel.getUsuario());
+                        for (ArrayList user: chatsAbertos
+                             ) {
+                            if (user.get(0).equals(painel.getUsuario())){
+                                Integer indexUser = chatsAbertos.indexOf(user);
+//                                Thread threadcliente = (Thread) chatsAbertos.get(indexUser).get(1);
+//                                threadcliente.stop();
+//                                chatsAbertos.remove(chatsAbertos.get(indexUser));
+                                System.out.println("Array desejado: " + chatsAbertos.get(indexUser).get(1));
+                            }
+                        }
                         tabbedPane.remove(tab);
                         //TODO: Desconectar o meuUsuário com o Usuário desligado
                     });
@@ -113,8 +125,14 @@ public class ChatClientSwing extends JFrame {
                 if (evt.getClickCount() == 2) {
                     int index = list.locationToIndex(evt.getPoint());
                     Usuario user = (Usuario) list.getModel().getElementAt(index);
-                    if (chatsAbertos.add(user)) {
+                    if (true) {
                         //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
+                        Thread usuarioConexao = new Thread (new ClienteThread(user.getEndereco(), 8081, null));
+                        usuarioConexao.start();
+                        ArrayList usuario = new ArrayList<>();
+                        usuario.add(user);
+                        usuario.add(usuarioConexao);
+                        chatsAbertos.add(usuario);
                         tabbedPane.add(user.toString(), new PainelChatPVT(user));
                     }
                 }
@@ -165,7 +183,6 @@ public class ChatClientSwing extends JFrame {
                 areaChat.append(meuUsuario.getNome() + "> " + e.getActionCommand() + "\n");
                 Mensagem mensagemUsuario = new Mensagem(e.getActionCommand(), meuUsuario);
                 // TODO: Enviar a mensagem do usuário remetente ao destinatário
-                new Thread(new PeerThread(mensagemUsuario, usuario)).start();
             });
             add(new JScrollPane(areaChat), new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
             add(campoEntrada, new GridBagConstraints(0, 1, 1, 1, 1, 0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));

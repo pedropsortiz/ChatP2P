@@ -18,6 +18,7 @@ public class MensagemRadar implements Runnable{
     static {
         try {
             endereco = InetAddress.getLocalHost();
+//            endereco = InetAddress.getByName("255.255.255.255");
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }

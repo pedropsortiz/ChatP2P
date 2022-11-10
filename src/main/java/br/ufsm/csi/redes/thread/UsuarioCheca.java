@@ -9,7 +9,7 @@ import javax.swing.*;
 
 
 @AllArgsConstructor
-public class ListaChecar implements Runnable{
+public class UsuarioCheca implements Runnable{
 
     public ChatClientSwing janela;
     private final static int tempoDormir = 15000; //15 segundos
