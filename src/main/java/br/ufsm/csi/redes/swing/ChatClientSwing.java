@@ -88,7 +88,7 @@ public class ChatClientSwing extends JFrame {
 //                                Thread threadcliente = (Thread) chatsAbertos.get(indexUser).get(1);
 //                                threadcliente.stop();
 //                                chatsAbertos.remove(chatsAbertos.get(indexUser));
-                                System.out.println("Array desejado: " + chatsAbertos.get(indexUser).get(1));
+                                System.out.println("Array desejado: " + chatsAbertos.get(indexUser));
                             }
                         }
                         tabbedPane.remove(tab);

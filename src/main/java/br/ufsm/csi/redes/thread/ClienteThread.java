@@ -20,6 +20,7 @@ public class ClienteThread implements Runnable{
     @SneakyThrows
     @Override
     public void run() {
+        System.out.println("Nova conexão estabelecida!\n");
         while (true){
 //            System.out.println("Nova conexão estabelecida");
             Socket conexao;
@@ -36,7 +37,7 @@ public class ClienteThread implements Runnable{
 //            entrada = new ObjectInputStream(conexao.getInputStream());
 
             //Enviando a mensagem do cliente para o servidor
-            saida.write(1);
+//            saida.write(1);
             saida.flush();
             Thread.sleep(1000);
 
