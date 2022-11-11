@@ -16,13 +16,6 @@ import java.util.Spliterator;
 
 import static br.ufsm.csi.redes.model.Usuario.StatusUsuario.*;
 
-/**
- *
- * User: Rafael
- * Date: 13/10/14
- * Time: 10:28
- *
- */
 public class ChatClientSwing extends JFrame {
 
     private Usuario meuUsuario = new Usuario();
@@ -30,7 +23,8 @@ public class ChatClientSwing extends JFrame {
     private JList listaChat;
     private DefaultListModel dfListModel;
     private JTabbedPane tabbedPane = new JTabbedPane();
-    private ArrayList<ArrayList> chatsAbertos = new ArrayList<>();
+    private ArrayList<Usuario> chatsAbertos = new ArrayList<>();
+    private ArrayList<ClienteThread> threadsAbertas = new ArrayList<>();
 
     public ChatClientSwing() throws UnknownHostException {
         setLayout(new GridBagLayout());
@@ -81,16 +75,16 @@ public class ChatClientSwing extends JFrame {
                     JMenuItem item = new JMenuItem("Fechar");
                     item.addActionListener(e1 -> {
                         PainelChatPVT painel = (PainelChatPVT) tabbedPane.getComponentAt(tab);
-                        for (ArrayList user: chatsAbertos
+                        for (Usuario user: chatsAbertos
                              ) {
-                            if (user.get(0).equals(painel.getUsuario())){
-                                Integer indexUser = chatsAbertos.indexOf(user);
-//                                Thread threadcliente = (Thread) chatsAbertos.get(indexUser).get(1);
-//                                threadcliente.stop();
-//                                chatsAbertos.remove(chatsAbertos.get(indexUser));
-                                System.out.println("Array desejado: " + chatsAbertos.get(indexUser));
+                            if (user.equals(painel.getUsuario())){
+                                Integer indexConexao = chatsAbertos.indexOf(user);
+                                ClienteThread conexao = threadsAbertas.get(indexConexao);
+                                conexao.stop();
+                                threadsAbertas.remove(indexConexao);
                             }
                         }
+                        chatsAbertos.remove(painel.getUsuario());
                         tabbedPane.remove(tab);
                         //TODO: Desconectar o meuUsuário com o Usuário desligado
                     });
@@ -125,14 +119,11 @@ public class ChatClientSwing extends JFrame {
                 if (evt.getClickCount() == 2) {
                     int index = list.locationToIndex(evt.getPoint());
                     Usuario user = (Usuario) list.getModel().getElementAt(index);
-                    if (true) {
+                    if (chatsAbertos.add(user)) {
                         //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
-                        Thread usuarioConexao = new Thread (new ClienteThread(user.getEndereco(), 8081, null));
-                        usuarioConexao.start();
-                        ArrayList usuario = new ArrayList<>();
-                        usuario.add(user);
-                        usuario.add(usuarioConexao);
-                        chatsAbertos.add(usuario);
+                        ClienteThread novaThread = new ClienteThread(user.getEndereco(), 8081, null);
+                        threadsAbertas.add(novaThread);
+                        novaThread.start();
                         tabbedPane.add(user.toString(), new PainelChatPVT(user));
                     }
                 }
