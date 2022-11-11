@@ -80,11 +80,11 @@ public class ChatClientSwing extends JFrame {
                             if (user.equals(painel.getUsuario())){
                                 Integer indexConexao = chatsAbertos.indexOf(user);
                                 ClienteThread conexao = threadsAbertas.get(indexConexao);
-                                conexao.stop();
+
                                 threadsAbertas.remove(indexConexao);
+                                chatsAbertos.remove(indexConexao);
                             }
                         }
-                        chatsAbertos.remove(painel.getUsuario());
                         tabbedPane.remove(tab);
                         //TODO: Desconectar o meuUsuário com o Usuário desligado
                     });
@@ -123,7 +123,6 @@ public class ChatClientSwing extends JFrame {
                         //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
                         ClienteThread novaThread = new ClienteThread(user.getEndereco(), 8081);
                         threadsAbertas.add(novaThread);
-                        novaThread.start();
                         tabbedPane.add(user.toString(), new PainelChatPVT(user));
                     }
                 }
@@ -178,7 +177,8 @@ public class ChatClientSwing extends JFrame {
                     if (user.equals(usuario)){
                         Integer indexConexao = chatsAbertos.indexOf(user);
                         ClienteThread conexao = threadsAbertas.get(indexConexao);
-                        conexao.sendMessage(mensagemUsuario);
+                        conexao.setMensagem(mensagemUsuario);
+                        conexao.start();
                     }
                 }
                 // TODO: Enviar a mensagem do usuário remetente ao destinatário

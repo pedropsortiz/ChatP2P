@@ -1,15 +1,10 @@
 package br.ufsm.csi.redes.thread;
 
-import br.ufsm.csi.redes.model.Mensagem;
-import br.ufsm.csi.redes.model.Pacote;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 
 import java.io.*;
-import java.net.DatagramPacket;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 
 public class ServidorThread implements Runnable{
 
@@ -24,13 +19,20 @@ public class ServidorThread implements Runnable{
     @Override
     public void run() {
         while (true){
-            conexaoCliente = conexaoServidor.accept();
+                conexaoCliente = conexaoServidor.accept();
+                ObjectInputStream entrada = new ObjectInputStream(conexaoCliente.getInputStream());
 
-            ObjectOutputStream saida = new ObjectOutputStream(conexaoCliente.getOutputStream());
-            ObjectInputStream entrada = new ObjectInputStream(conexaoCliente.getInputStream());
-            String mensagemFinal = entrada.readObject().toString();
-            System.out.println(mensagemFinal);
-            conexaoCliente.close();
+                //Wait
+
+                String mensagemFinal = entrada.readObject().toString();
+                System.out.println(mensagemFinal);
+                entrada.close();
+
+                //Voltar ao wait
+
+                conexaoCliente.close();
+                Thread.sleep(1000);
+
         }
     }
 }

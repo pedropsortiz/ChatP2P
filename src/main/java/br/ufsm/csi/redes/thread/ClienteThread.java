@@ -14,12 +14,11 @@ public class ClienteThread implements Runnable{
 
     private InetAddress endereco;
     private int porta;
-    Socket conexao;
     private Mensagem mensagem;
 
     private Thread worker;
-    private final AtomicBoolean running = new AtomicBoolean(false);
-    private final AtomicBoolean mensagemEnvio = new AtomicBoolean(true);
+    private final AtomicBoolean running = new AtomicBoolean(true);
+    private final AtomicBoolean mensagemEnvio = new AtomicBoolean(false);
 
     public ClienteThread(InetAddress endereco, int porta){
         this.endereco = endereco;
@@ -31,42 +30,35 @@ public class ClienteThread implements Runnable{
         worker.start();
     }
 
-    @SneakyThrows
     public void stop() {
         running.set(false);
-        System.out.println("A conexão foi morta");
-        conexao.close();
+        System.out.println("deu certo? " + running);
     }
 
     //TODO: Criar método de recebimento e envio de pacotes
 
-    public void sendMessage(Mensagem mensagem){
+    public void setMensagem(Mensagem mensagem){
         this.mensagem = mensagem;
         mensagemEnvio.set(false);
     }
 
     @SneakyThrows
-    @Override
     public void run() {
         running.set(true);
-        System.out.println("A conexão foi estabelecido, aguardo uma mensagem");
         while (running.get()) {
+
+            Socket conexao;
             conexao = new Socket(endereco, porta);
-            while (mensagemEnvio.get()){}
-            if (mensagemEnvio.get()){
-                while(true){}
-            } else {
-                ObjectOutputStream saida;
-                saida = new ObjectOutputStream(conexao.getOutputStream());
 
-                //Enviando a mensagem do cliente para o servidor
-                saida.writeObject(mensagem.getUsuario().getNome() + " > " + mensagem.getMensagemTexto());
-                saida.flush();
-                saida.close();
-                mensagemEnvio.set(true);
-            }
+            ObjectOutputStream saida = new ObjectOutputStream(conexao.getOutputStream());
+            saida.writeObject(mensagem.getUsuario().getNome() + " > " + mensagem.getMensagemTexto());
+            saida.flush();
+            saida.close();
 
+            conexao.close();
+            break;
         }
+
     }
 
 }

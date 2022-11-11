@@ -44,7 +44,6 @@ public class MensagemRadar implements Runnable{
             Pacote objPacote = new ObjectMapper().readValue(stringMensagem, Pacote.class);
 
             // Ignorando mensagens que são recebidas de localhost
-            //TODO: Descomentar barramento de pacotes do localhost
             //if (!(objPacote.getUsuario().getEndereco().equals(InetAddress.getLocalHost()))){
                 Usuario usuario = objPacote.getUsuario();
                 usuario.setUltimoAcesso(System.currentTimeMillis());
