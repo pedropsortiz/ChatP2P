@@ -121,7 +121,7 @@ public class ChatClientSwing extends JFrame {
                     Usuario user = (Usuario) list.getModel().getElementAt(index);
                     if (chatsAbertos.add(user)) {
                         //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
-                        ClienteThread novaThread = new ClienteThread(user.getEndereco(), 8081, null);
+                        ClienteThread novaThread = new ClienteThread(user.getEndereco(), 8081);
                         threadsAbertas.add(novaThread);
                         novaThread.start();
                         tabbedPane.add(user.toString(), new PainelChatPVT(user));
@@ -173,6 +173,14 @@ public class ChatClientSwing extends JFrame {
                 ((JTextField) e.getSource()).setText("");
                 areaChat.append(meuUsuario.getNome() + "> " + e.getActionCommand() + "\n");
                 Mensagem mensagemUsuario = new Mensagem(e.getActionCommand(), meuUsuario);
+                for (Usuario user: chatsAbertos
+                ) {
+                    if (user.equals(usuario)){
+                        Integer indexConexao = chatsAbertos.indexOf(user);
+                        ClienteThread conexao = threadsAbertas.get(indexConexao);
+                        conexao.sendMessage(mensagemUsuario);
+                    }
+                }
                 // TODO: Enviar a mensagem do usuário remetente ao destinatário
             });
             add(new JScrollPane(areaChat), new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));

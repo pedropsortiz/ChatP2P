@@ -51,10 +51,10 @@ public class MensagemRadar implements Runnable{
                 if (!(janela.retornarListaUsuarios().contains(usuario))){
                     janela.adicionaUsuario(usuario);
                     //Estabelecer conexão com o TCP nesse ponto
-                    System.out.println("Pacote Detectada!\nTipo da mensagem: " + objPacote.getTipoMensagem() + "\nUsuário: " + usuario + "\nEndereço: "+ usuario.getEndereco() + "\n");
+//                    System.out.println("Pacote Detectada!\nTipo da mensagem: " + objPacote.getTipoMensagem() + "\nUsuário: " + usuario + "\nEndereço: "+ usuario.getEndereco() + "\n");
                 } else{
                     janela.atualizarUsuario(usuario);
-                    System.out.println("Usuário atualizado com sucesso!\nStatus atualizado: " + usuario.getStatus() + "\nTempo atual da última conexão: " + (usuario.getUltimoAcesso() / 1000) + "\n");
+//                    System.out.println("Usuário atualizado com sucesso!\nStatus atualizado: " + usuario.getStatus() + "\nTempo atual da última conexão: " + (usuario.getUltimoAcesso() / 1000) + "\n");
                 }
             //}
         }

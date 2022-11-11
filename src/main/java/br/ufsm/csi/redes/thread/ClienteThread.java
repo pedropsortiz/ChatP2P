@@ -19,11 +19,11 @@ public class ClienteThread implements Runnable{
 
     private Thread worker;
     private final AtomicBoolean running = new AtomicBoolean(false);
+    private final AtomicBoolean mensagemEnvio = new AtomicBoolean(true);
 
-    public ClienteThread(InetAddress endereco, int porta, Mensagem mensagem){
+    public ClienteThread(InetAddress endereco, int porta){
         this.endereco = endereco;
         this.porta = porta;
-        this.mensagem = mensagem;
     }
 
     public void start() {
@@ -35,37 +35,35 @@ public class ClienteThread implements Runnable{
         running.set(false);
     }
 
+    //TODO: Criar método de recebimento e envio de pacotes
+
+    public void sendMessage(Mensagem mensagem){
+        this.mensagem = mensagem;
+        mensagemEnvio.set(false);
+    }
+
     @SneakyThrows
     @Override
     public void run() {
         running.set(true);
+        System.out.println("A conexão foi estabelecido, aguardo uma mensagem");
         while (running.get()) {
-            try {
-//            System.out.println("Nova conexão estabelecida");
-                Socket conexao;
+            Socket conexao;
+            conexao = new Socket(endereco, porta);
+            while (mensagemEnvio.get()){}
+            if (mensagemEnvio.get()){
+                while(true){}
+            } else {
                 ObjectOutputStream saida;
-//            ObjectInputStream entrada;
-
-                //Estabelecendo conexão com o servidor
-                conexao = new Socket(endereco, porta);
-
-//            while (mensagem == null){}
-
-
                 saida = new ObjectOutputStream(conexao.getOutputStream());
-//            entrada = new ObjectInputStream(conexao.getInputStream());
 
                 //Enviando a mensagem do cliente para o servidor
-                saida.write(1);
+                saida.writeObject(mensagem.getUsuario().getNome() + " > " + mensagem.getMensagemTexto());
                 saida.flush();
-                Thread.sleep(1000);
-
-//            entrada.close();
-//            saida.close();
-//            conexao.close();
-            } catch (InterruptedException e){
-                Thread.currentThread().interrupt();
+                saida.close();
+                mensagemEnvio.set(true);
             }
+
         }
     }
 
