@@ -14,7 +14,7 @@ public class ClienteThread implements Runnable{
 
     private InetAddress endereco;
     private int porta;
-
+    Socket conexao;
     private Mensagem mensagem;
 
     private Thread worker;
@@ -31,8 +31,11 @@ public class ClienteThread implements Runnable{
         worker.start();
     }
 
+    @SneakyThrows
     public void stop() {
         running.set(false);
+        System.out.println("A conexão foi morta");
+        conexao.close();
     }
 
     //TODO: Criar método de recebimento e envio de pacotes
@@ -48,7 +51,6 @@ public class ClienteThread implements Runnable{
         running.set(true);
         System.out.println("A conexão foi estabelecido, aguardo uma mensagem");
         while (running.get()) {
-            Socket conexao;
             conexao = new Socket(endereco, porta);
             while (mensagemEnvio.get()){}
             if (mensagemEnvio.get()){

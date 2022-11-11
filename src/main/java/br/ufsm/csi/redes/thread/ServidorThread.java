@@ -28,13 +28,8 @@ public class ServidorThread implements Runnable{
 
             ObjectOutputStream saida = new ObjectOutputStream(conexaoCliente.getOutputStream());
             ObjectInputStream entrada = new ObjectInputStream(conexaoCliente.getInputStream());
-
-            // Conversão do byte recebido para Pacote
-//            String stringMensagem = new String(entrada.read());
-//            Pacote objPacote = new ObjectMapper().readValue(stringMensagem, Pacote.class);
-
-//            System.out.println(msg.getUsuario().getNome() + " > " + msg.getMensagemTexto());
-            System.out.println(entrada.readObject());
+            String mensagemFinal = entrada.readObject().toString();
+            System.out.println(mensagemFinal);
             conexaoCliente.close();
         }
     }
