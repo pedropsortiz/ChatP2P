@@ -24,6 +24,7 @@ public class ServidorThread {
 
     public ServidorThread(InetAddress endereco) throws IOException {
         this.servidor = new ServerSocket(this.porta, 50, endereco);
+        System.out.println("Nova conexão realiza para o endereço " + endereco + " e a porta " + porta);
         (new EsperaMensagem()).start();
     }
 
@@ -31,23 +32,26 @@ public class ServidorThread {
         parar = true;
         conexao.close();
         servidor.close();
+        System.out.println("Conexão do servidor encerrada!");
     }
 
     private boolean ouve() throws Exception {
+        System.out.println(servidor.isClosed());
+        if (!servidor.isClosed()){
+            conexao = servidor.accept();
 
-        conexao = servidor.accept();
+            entrada = new ObjectInputStream(conexao.getInputStream());
+            String mensagemFinal = entrada.readObject().toString();
 
-        entrada = new ObjectInputStream(conexao.getInputStream());
-        String mensagemFinal = entrada.readObject().toString();
-
-        ChatClientSwing.PainelChatPVT.addMensagem(mensagemFinal);
-        return true;
+            ChatClientSwing.PainelChatPVT.addMensagem(mensagemFinal);
+            return true;
+        }
+        return false;
     }
 
     public class EsperaMensagem extends Thread {
         @Override
         public void run() {
-            super.run();
             try {
                 while(!parar){
                     ouve();

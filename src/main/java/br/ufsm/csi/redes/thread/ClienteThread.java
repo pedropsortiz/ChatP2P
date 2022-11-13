@@ -4,6 +4,7 @@ import br.ufsm.csi.redes.model.Mensagem;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -19,6 +20,8 @@ public class ClienteThread implements Runnable{
     private Thread worker;
     private final AtomicBoolean running = new AtomicBoolean(true);
     private final AtomicBoolean mensagemEnvio = new AtomicBoolean(false);
+    Socket conexao;
+
 
     public ClienteThread(InetAddress endereco, int porta){
         this.endereco = endereco;
@@ -30,9 +33,10 @@ public class ClienteThread implements Runnable{
         worker.start();
     }
 
-    public void stop() {
+    public void stop() throws IOException {
         running.set(false);
-        System.out.println("deu certo? " + running);
+        conexao.close();
+        System.out.println("Conexão do cliente encerrada!");
     }
 
     //TODO: Criar método de recebimento e envio de pacotes
@@ -47,7 +51,6 @@ public class ClienteThread implements Runnable{
         running.set(true);
         while (running.get()) {
 
-            Socket conexao;
             conexao = new Socket(endereco, porta);
 
             ObjectOutputStream saida = new ObjectOutputStream(conexao.getOutputStream());
