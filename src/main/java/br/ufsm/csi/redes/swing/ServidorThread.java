@@ -36,16 +36,20 @@ public class ServidorThread {
     }
 
     private boolean ouve() throws Exception {
-        System.out.println(servidor.isClosed());
-        if (!servidor.isClosed()){
-            conexao = servidor.accept();
+        try {
+            if (!parar){
+                conexao = servidor.accept();
 
-            entrada = new ObjectInputStream(conexao.getInputStream());
-            String mensagemFinal = entrada.readObject().toString();
+                entrada = new ObjectInputStream(conexao.getInputStream());
+                String mensagemFinal = entrada.readObject().toString();
 
-            ChatClientSwing.PainelChatPVT.addMensagem(mensagemFinal);
-            return true;
+                ChatClientSwing.PainelChatPVT.addMensagem(mensagemFinal);
+                return true;
+            }
+        }catch (Exception e){
+            System.out.println(e);
         }
+
         return false;
     }
 
@@ -54,6 +58,7 @@ public class ServidorThread {
         public void run() {
             try {
                 while(!parar){
+                    System.out.println("ainda to tentando");
                     ouve();
                 }
             } catch (Exception e) {
