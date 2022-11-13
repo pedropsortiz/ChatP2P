@@ -20,7 +20,7 @@ public class ServidorThread {
     private Socket conexao;
     public Boolean parar = false;
     private ObjectInputStream  entrada;
-    private OutputStream saida;
+    private ObjectOutputStream saida;
 
     public ServidorThread(InetAddress endereco) throws IOException {
         this.servidor = new ServerSocket(this.porta, 50, endereco);
@@ -30,6 +30,7 @@ public class ServidorThread {
 
     public void stop() throws Exception{
         parar = true;
+        entrada.close();
         conexao.close();
         servidor.close();
         System.out.println("Conexão do servidor encerrada!");
@@ -44,10 +45,12 @@ public class ServidorThread {
                 String mensagemFinal = entrada.readObject().toString();
 
                 ChatClientSwing.PainelChatPVT.addMensagem(mensagemFinal);
+                entrada.close();
+                conexao.close();
                 return true;
             }
         }catch (Exception e){
-            System.out.println(e);
+            System.out.println("Erro: " + e);
         }
 
         return false;
@@ -58,11 +61,14 @@ public class ServidorThread {
         public void run() {
             try {
                 while(!parar){
-                    System.out.println("ainda to tentando");
-                    ouve();
+                    if (ouve()) {
+                        //TODO
+                    } else {
+                        //TODO
+                    }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println(e);
             }
         }
     }

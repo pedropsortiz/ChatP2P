@@ -59,7 +59,7 @@ public class ClienteThread implements Runnable{
             saida.close();
 
             conexao.close();
-            break;
+            running.set(false);
         }
 
     }
