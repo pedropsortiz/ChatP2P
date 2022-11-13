@@ -40,7 +40,6 @@ public class ServidorThread {
         entrada = new ObjectInputStream(conexao.getInputStream());
         String mensagemFinal = entrada.readObject().toString();
 
-//        System.out.print(mensagemFinal);
         ChatClientSwing.PainelChatPVT.addMensagem(mensagemFinal);
         return true;
     }

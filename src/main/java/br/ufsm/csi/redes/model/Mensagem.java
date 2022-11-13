@@ -17,7 +17,7 @@ public class Mensagem implements Serializable {
     private Usuario destinatario;
 
     public String mensagem(){
-        String mensagem = remetente.getNome() + " > " + mensagemTexto + "\n";
+        String mensagem = remetente.getNome() + ": " + mensagemTexto + "\n";
         return mensagem;
     }
 
