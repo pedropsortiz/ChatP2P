@@ -51,7 +51,7 @@ public class ClienteThread implements Runnable{
             conexao = new Socket(endereco, porta);
 
             ObjectOutputStream saida = new ObjectOutputStream(conexao.getOutputStream());
-            saida.writeObject(mensagem.getUsuario().getNome() + " > " + mensagem.getMensagemTexto());
+            saida.writeObject(mensagem.mensagem());
             saida.flush();
             saida.close();
 

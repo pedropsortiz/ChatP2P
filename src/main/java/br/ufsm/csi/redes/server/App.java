@@ -24,7 +24,7 @@ public class App {
 
         System.out.println(ANSI_START + "Iniciando broadcasting para o endereço " + endereco + ANSI_RESET);
         System.out.println(ANSI_START + "Escutando porta " + porta + ANSI_RESET + "\n");
-        new Thread(new ServidorThread()).start();
+//        new ServidorThread(null).setJanela(janela);
         new Thread(new MensagemRadar(janela)).start();
         new Thread(new MensagemEnvio(janela)).start();
         new Thread(new UsuarioCheca(janela)).start();

@@ -13,6 +13,12 @@ import java.io.Serializable;
 public class Mensagem implements Serializable {
 
     private String mensagemTexto;
-    private Usuario usuario;
+    private Usuario remetente;
+    private Usuario destinatario;
+
+    public String mensagem(){
+        String mensagem = remetente.getNome() + " > " + mensagemTexto + "\n";
+        return mensagem;
+    }
 
 }

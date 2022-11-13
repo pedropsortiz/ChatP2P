@@ -6,13 +6,10 @@ import br.ufsm.csi.redes.thread.ClienteThread;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.lang.reflect.Array;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Spliterator;
 
 import static br.ufsm.csi.redes.model.Usuario.StatusUsuario.*;
 
@@ -110,7 +107,7 @@ public class ChatClientSwing extends JFrame {
         menuBar.add(menu);
     }
 
-    private JComponent criaLista() {
+    public JComponent criaLista() {
         dfListModel = new DefaultListModel();
         listaChat = new JList(dfListModel);
         listaChat.addMouseListener(new MouseAdapter() {
@@ -121,6 +118,12 @@ public class ChatClientSwing extends JFrame {
                     Usuario user = (Usuario) list.getModel().getElementAt(index);
                     if (chatsAbertos.add(user)) {
                         //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
+                        try {
+                            ServidorThread nova = new ServidorThread(user.getEndereco());
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+
                         ClienteThread novaThread = new ClienteThread(user.getEndereco(), 8081);
                         threadsAbertas.add(novaThread);
                         tabbedPane.add(user.toString(), new PainelChatPVT(user));
@@ -156,11 +159,15 @@ public class ChatClientSwing extends JFrame {
         return this.meuUsuario.getStatus();
     }
 
-    class PainelChatPVT extends JPanel {
+    public class PainelChatPVT extends JPanel {
 
-        JTextArea areaChat;
+        static JTextArea areaChat;
         JTextField campoEntrada;
         Usuario usuario;
+
+        public static void addMensagem(String mensagem){
+            areaChat.append(mensagem);
+        }
 
         PainelChatPVT(Usuario usuario) {
             setLayout(new GridBagLayout());
@@ -170,8 +177,8 @@ public class ChatClientSwing extends JFrame {
             campoEntrada = new JTextField();
             campoEntrada.addActionListener(e -> {
                 ((JTextField) e.getSource()).setText("");
-                areaChat.append(meuUsuario.getNome() + "> " + e.getActionCommand() + "\n");
-                Mensagem mensagemUsuario = new Mensagem(e.getActionCommand(), meuUsuario);
+                Mensagem mensagemUsuario = new Mensagem(e.getActionCommand(), meuUsuario, usuario);
+                addMensagem(mensagemUsuario.mensagem());
                 for (Usuario user: chatsAbertos
                 ) {
                     if (user.equals(usuario)){
