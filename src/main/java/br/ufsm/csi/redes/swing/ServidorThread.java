@@ -23,52 +23,47 @@ public class ServidorThread {
     private ObjectOutputStream saida;
 
     public ServidorThread(InetAddress endereco) throws IOException {
-        this.servidor = new ServerSocket(this.porta, 50, endereco);
-        System.out.println("Nova conexão realiza para o endereço " + endereco + " e a porta " + porta);
+        try {
+            this.servidor = new ServerSocket(this.porta, 50, endereco);
+            System.out.println("Nova conexão realiza para o endereço " + endereco + " e a porta " + porta);
+        } catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    public void start(){
         (new EsperaMensagem()).start();
     }
 
     public void stop() throws Exception{
         parar = true;
-        entrada.close();
         conexao.close();
         servidor.close();
         System.out.println("Conexão do servidor encerrada!");
     }
 
-    private boolean ouve() throws Exception {
+    private void ouve(){
         try {
-            if (!parar){
-                conexao = servidor.accept();
+            conexao = servidor.accept();
 
-                entrada = new ObjectInputStream(conexao.getInputStream());
-                String mensagemFinal = entrada.readObject().toString();
+            entrada = new ObjectInputStream(conexao.getInputStream());
+            String mensagemFinal = entrada.readObject().toString();
 
-                ChatClientSwing.PainelChatPVT.addMensagem(mensagemFinal);
-                entrada.close();
-                conexao.close();
-                return true;
-            }
+            ChatClientSwing.PainelChatPVT.addMensagem(mensagemFinal);
         }catch (Exception e){
-            System.out.println("Erro: " + e);
+            System.out.println("O erro ocorre aqui: " + e);
         }
-
-        return false;
     }
 
     public class EsperaMensagem extends Thread {
         @Override
         public void run() {
-            try {
-                while(!parar){
-                    if (ouve()) {
-                        //TODO
-                    } else {
-                        //TODO
-                    }
+            while(!parar){
+                try {
+                    ouve();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (Exception e) {
-                System.out.println(e);
             }
         }
     }

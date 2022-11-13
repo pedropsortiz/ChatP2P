@@ -131,16 +131,13 @@ public class ChatClientSwing extends JFrame {
                     if (chatsAbertos.add(user)) {
                         //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
                         ServidorThread threadServidor;
+                        ArrayList novaConexao = new ArrayList<>();
+                        novaConexao.add(new ClienteThread(user.getEndereco(), 8081));
                         try {
-                            threadServidor = new ServidorThread(user.getEndereco());
+                            novaConexao.add(new ServidorThread(user.getEndereco()));
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
-
-                        ClienteThread threadCliente = new ClienteThread(user.getEndereco(), 8081);
-                        ArrayList novaConexao = new ArrayList<>();
-                        novaConexao.add(threadCliente);
-                        novaConexao.add(threadServidor);
                         threadConexao.add(novaConexao);
                         tabbedPane.add(user.toString(), new PainelChatPVT(user));
                     }
@@ -201,6 +198,8 @@ public class ChatClientSwing extends JFrame {
                         Integer indexConexao = chatsAbertos.indexOf(user);
                         ArrayList conexao = threadConexao.get(indexConexao);
                         ClienteThread conexaoCliente = (ClienteThread) conexao.get(0);
+                        ServidorThread conexaoServidor = (ServidorThread) conexao.get(1);
+                        conexaoServidor.start();
                         conexaoCliente.setMensagem(mensagemUsuario);
                         conexaoCliente.start();
                     }
