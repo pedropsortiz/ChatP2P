@@ -178,7 +178,7 @@ public class ChatClientSwing extends JFrame {
             campoEntrada.addActionListener(e -> {
                 ((JTextField) e.getSource()).setText("");
                 Mensagem mensagemUsuario = new Mensagem(e.getActionCommand(), meuUsuario, usuario);
-                addMensagem(mensagemUsuario.mensagem());
+//                addMensagem(mensagemUsuario.mensagem());
                 for (Usuario user: chatsAbertos
                 ) {
                     if (user.equals(usuario)){
