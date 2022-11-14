@@ -1,12 +1,10 @@
-package br.ufsm.csi.redes.swing;
+package br.ufsm.csi.redes.c_s;
 
-import br.ufsm.csi.redes.swing.ChatClientSwing;
+import br.ufsm.csi.redes.gui.ChatClientSwing;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -22,17 +20,13 @@ public class ServidorThread {
     private ObjectInputStream  entrada;
     private ObjectOutputStream saida;
 
-    public ServidorThread(InetAddress endereco) throws IOException {
+    public ServidorThread() throws IOException {
         try {
-            this.servidor = new ServerSocket(this.porta, 50, endereco);
-            System.out.println("Nova conexão realiza para o endereço " + endereco + " e a porta " + porta);
+            this.servidor = new ServerSocket(this.porta);
+            new EsperaMensagem().start();
         } catch (Exception e){
             System.out.println(e);
         }
-    }
-
-    public void start(){
-        (new EsperaMensagem()).start();
     }
 
     public void stop() throws Exception{
@@ -51,7 +45,7 @@ public class ServidorThread {
 
             ChatClientSwing.PainelChatPVT.addMensagem(mensagemFinal);
         }catch (Exception e){
-            System.out.println("O erro ocorre aqui: " + e);
+            System.out.println(e);
         }
     }
 

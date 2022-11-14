@@ -1,6 +1,6 @@
-package br.ufsm.csi.redes.thread;
+package br.ufsm.csi.redes.packageThread;
 
-import br.ufsm.csi.redes.swing.ChatClientSwing;
+import br.ufsm.csi.redes.gui.ChatClientSwing;
 import br.ufsm.csi.redes.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;

@@ -1,4 +1,4 @@
-package br.ufsm.csi.redes.thread;
+package br.ufsm.csi.redes.c_s;
 
 import br.ufsm.csi.redes.model.Mensagem;
 import lombok.AllArgsConstructor;
@@ -28,9 +28,11 @@ public class ClienteThread implements Runnable{
         this.porta = porta;
     }
 
+    @SneakyThrows
     public void start() {
         worker = new Thread(this);
         worker.start();
+        conexao = new Socket(endereco, porta);
     }
 
     public void stop() throws IOException {
@@ -50,16 +52,12 @@ public class ClienteThread implements Runnable{
     public void run() {
         running.set(true);
         while (running.get()) {
-
-            conexao = new Socket(endereco, porta);
-
-            ObjectOutputStream saida = new ObjectOutputStream(conexao.getOutputStream());
-            saida.writeObject(mensagem.mensagem());
-            saida.flush();
-            saida.close();
-
-            conexao.close();
-            running.set(false);
+            if (mensagem.mensagem() != null){
+                ObjectOutputStream saida = new ObjectOutputStream(conexao.getOutputStream());
+                saida.writeObject(mensagem.mensagem());
+                saida.flush();
+                saida.close();
+            }
         }
 
     }

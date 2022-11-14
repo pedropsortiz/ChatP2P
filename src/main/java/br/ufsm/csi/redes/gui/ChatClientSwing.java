@@ -1,7 +1,7 @@
-package br.ufsm.csi.redes.swing;
+package br.ufsm.csi.redes.gui;
 import br.ufsm.csi.redes.model.Mensagem;
 import br.ufsm.csi.redes.model.Usuario;
-import br.ufsm.csi.redes.thread.ClienteThread;
+import br.ufsm.csi.redes.c_s.ClienteThread;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +21,7 @@ public class ChatClientSwing extends JFrame {
     private DefaultListModel dfListModel;
     private JTabbedPane tabbedPane = new JTabbedPane();
     private ArrayList<Usuario> chatsAbertos = new ArrayList<>();
-    private ArrayList<ArrayList> threadConexao = new ArrayList<>();
+    private ArrayList<ClienteThread> threadConexao = new ArrayList<>();
 
     public ChatClientSwing() throws UnknownHostException {
         setLayout(new GridBagLayout());
@@ -76,17 +76,10 @@ public class ChatClientSwing extends JFrame {
                              ) {
                             if (user.equals(painel.getUsuario())){
                                 Integer indexConexao = chatsAbertos.indexOf(user);
-                                ArrayList conexao = threadConexao.get(indexConexao);
-                                ClienteThread conexaoCliente = (ClienteThread) conexao.get(0);
-                                ServidorThread conexaoServidor = (ServidorThread) conexao.get(1);
+                                ClienteThread conexaoCliente = threadConexao.get(indexConexao);
                                 try {
                                     conexaoCliente.stop();
                                 } catch (IOException ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                                try {
-                                    conexaoServidor.stop();
-                                } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
 
@@ -130,15 +123,9 @@ public class ChatClientSwing extends JFrame {
                     Usuario user = (Usuario) list.getModel().getElementAt(index);
                     if (chatsAbertos.add(user)) {
                         //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
-                        ServidorThread threadServidor;
-                        ArrayList novaConexao = new ArrayList<>();
-                        novaConexao.add(new ClienteThread(user.getEndereco(), 8081));
-                        try {
-                            novaConexao.add(new ServidorThread(user.getEndereco()));
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        threadConexao.add(novaConexao);
+                        ClienteThread conexao = new ClienteThread(user.getEndereco(), 8081);
+                        conexao.start();
+                        threadConexao.add(conexao);
                         tabbedPane.add(user.toString(), new PainelChatPVT(user));
                     }
                 }
@@ -178,6 +165,8 @@ public class ChatClientSwing extends JFrame {
         JTextField campoEntrada;
         Usuario usuario;
 
+        ClienteThread conexaoUsuario;
+
         public static void addMensagem(String mensagem){
             areaChat.append(mensagem);
         }
@@ -191,17 +180,12 @@ public class ChatClientSwing extends JFrame {
             campoEntrada.addActionListener(e -> {
                 ((JTextField) e.getSource()).setText("");
                 Mensagem mensagemUsuario = new Mensagem(e.getActionCommand(), meuUsuario, usuario);
-//                addMensagem(mensagemUsuario.mensagem());
                 for (Usuario user: chatsAbertos
                 ) {
                     if (user.equals(usuario)){
                         Integer indexConexao = chatsAbertos.indexOf(user);
-                        ArrayList conexao = threadConexao.get(indexConexao);
-                        ClienteThread conexaoCliente = (ClienteThread) conexao.get(0);
-                        ServidorThread conexaoServidor = (ServidorThread) conexao.get(1);
-                        conexaoServidor.start();
-                        conexaoCliente.setMensagem(mensagemUsuario);
-                        conexaoCliente.start();
+                        this.conexaoUsuario = threadConexao.get(indexConexao);
+                        this.conexaoUsuario.setMensagem(mensagemUsuario);
                     }
                 }
                 // TODO: Enviar a mensagem do usuário remetente ao destinatário
