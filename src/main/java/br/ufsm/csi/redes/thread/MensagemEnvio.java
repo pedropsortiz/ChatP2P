@@ -1,12 +1,12 @@
 package br.ufsm.csi.redes.thread;
 
-import br.ufsm.csi.redes.model.*;
-import br.ufsm.csi.redes.view.ChatClientSwing;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
+        import br.ufsm.csi.redes.model.*;
+        import br.ufsm.csi.redes.view.ChatClientSwing;
+        import com.fasterxml.jackson.databind.ObjectMapper;
+        import lombok.SneakyThrows;
 
-import java.io.IOException;
-import java.net.*;
+        import java.io.IOException;
+        import java.net.*;
 
 public class MensagemEnvio implements Runnable{
 
@@ -17,8 +17,9 @@ public class MensagemEnvio implements Runnable{
 
     static {
         try {
-//            endereco = InetAddress.getLocalHost();
-            endereco = InetAddress.getByName("255.255.255.255");
+//            endereco = InetAddress.getByName("192.168.81.151");
+              endereco = InetAddress.getByName("192.168.81.161");
+//            endereco = InetAddress.getByName("255.255.255.255");
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
@@ -45,10 +46,10 @@ public class MensagemEnvio implements Runnable{
                     endereco,
                     porta
             );
-
             conexao.send(datagramPacket);
             conexao.close();
             Thread.sleep(tempoDormir);
         }
     }
 }
+

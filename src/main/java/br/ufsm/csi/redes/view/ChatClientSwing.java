@@ -1,7 +1,7 @@
 package br.ufsm.csi.redes.view;
 import br.ufsm.csi.redes.model.Mensagem;
 import br.ufsm.csi.redes.model.Usuario;
-import br.ufsm.csi.redes.c_s.ClienteThread;
+import br.ufsm.csi.redes.c_s.Cliente;
 import lombok.SneakyThrows;
 
 import javax.swing.*;
@@ -9,7 +9,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -17,6 +16,7 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static br.ufsm.csi.redes.model.Usuario.StatusUsuario.*;
+
 
 public class ChatClientSwing extends JFrame {
 
@@ -26,7 +26,8 @@ public class ChatClientSwing extends JFrame {
     private DefaultListModel dfListModel;
     private JTabbedPane tabbedPane = new JTabbedPane();
     private ArrayList<Usuario> chatsAbertos = new ArrayList<>();
-    private ArrayList<ClienteThread> threadConexao = new ArrayList<>();
+    private ArrayList<Cliente> threadConexao = new ArrayList<>();
+
 
     public ChatClientSwing() throws UnknownHostException {
         setLayout(new GridBagLayout());
@@ -81,7 +82,7 @@ public class ChatClientSwing extends JFrame {
                              ) {
                             if (user.equals(painel.getUsuario())){
                                 Integer indexConexao = chatsAbertos.indexOf(user);
-                                ClienteThread conexaoCliente = threadConexao.get(indexConexao);
+                                Cliente conexaoCliente = threadConexao.get(indexConexao);
                                 try {
                                     conexaoCliente.stop();
                                 } catch (IOException ex) {
@@ -141,7 +142,7 @@ public class ChatClientSwing extends JFrame {
     private void iniciaChat(Usuario user) throws IOException {
         chatsAbertos.add(user);
         //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
-        ClienteThread conexao = new ClienteThread(user.getEndereco(), 8081);
+        Cliente conexao = new Cliente(user.getEndereco(), 8081);
         conexao.start();
         threadConexao.add(conexao);
         synchronized (tabbedPane) {
@@ -166,7 +167,7 @@ public class ChatClientSwing extends JFrame {
         Usuario usuario = getUsuario(conexao.getInetAddress());
         chatsAbertos.add(usuario);
         //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
-        ClienteThread cliente = new ClienteThread(conexao);
+        Cliente cliente = new Cliente(conexao);
         threadConexao.add(cliente);
         synchronized (tabbedPane) {
             PainelChatPVT novaTab = new PainelChatPVT(usuario);
@@ -206,7 +207,7 @@ public class ChatClientSwing extends JFrame {
         JTextField campoEntrada;
         Usuario usuario;
 
-        ClienteThread conexaoUsuario;
+        Cliente conexaoUsuario;
 
         public void addMensagem(String mensagem){
             areaChat.append(mensagem);
@@ -225,7 +226,7 @@ public class ChatClientSwing extends JFrame {
                 ) {
                     if (user.equals(usuario)){
                         Integer indexConexao = chatsAbertos.indexOf(user);
-                        ClienteThread conexao = threadConexao.get(indexConexao);
+                        Cliente conexao = threadConexao.get(indexConexao);
                         try {
                             conexao.setMensagem(mensagemUsuario);
                         } catch (IOException ex) {
@@ -256,11 +257,11 @@ public class ChatClientSwing extends JFrame {
 
     public class EscreveMensagem implements Runnable{
 
-        ClienteThread conexao;
+        Cliente conexao;
         PainelChatPVT tab;
         AtomicBoolean parar = new AtomicBoolean();
 
-        public void start(ClienteThread conexao, PainelChatPVT tab){
+        public void start(Cliente conexao, PainelChatPVT tab){
             this.conexao = conexao;
             this.tab = tab;
             this.parar.set(false);
@@ -279,7 +280,9 @@ public class ChatClientSwing extends JFrame {
             ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
             while (!(parar.get())){
                 if (entrada!=null && conexao.getRunning().get()){
-                    tab.addMensagem((String) entrada.readObject());
+                    synchronized (tab){
+                        tab.addMensagem((String) entrada.readObject());
+                    }
                 }
             }
         }

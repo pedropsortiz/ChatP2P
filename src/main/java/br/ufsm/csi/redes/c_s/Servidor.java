@@ -10,7 +10,7 @@ import java.net.Socket;
 
 @Setter
 @Getter
-public class ServidorThread {
+public class Servidor {
 
     static final int porta = 8081;
     private ServerSocket serverSocket;
@@ -20,7 +20,7 @@ public class ServidorThread {
     private ObjectOutputStream saida;
     private ChatClientSwing janela;
 
-    public ServidorThread(ChatClientSwing janela) throws IOException {
+    public Servidor(ChatClientSwing janela) throws IOException {
         try {
             this.serverSocket = new ServerSocket(this.porta);
             this.janela = janela;

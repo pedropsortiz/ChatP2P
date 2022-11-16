@@ -1,20 +1,18 @@
 package br.ufsm.csi.redes.c_s;
 
 import br.ufsm.csi.redes.model.Mensagem;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Getter
 @Setter
-public class ClienteThread implements Runnable{
+public class Cliente implements Runnable{
 
     private InetAddress endereco;
     private int porta;
@@ -26,14 +24,14 @@ public class ClienteThread implements Runnable{
     ObjectOutputStream saida;
 
 
-    public ClienteThread(InetAddress endereco, int porta) throws IOException {
+    public Cliente(InetAddress endereco, int porta) throws IOException {
         this.endereco = endereco;
         this.porta = porta;
         this.conexao = new Socket(endereco, porta);
         saida = new ObjectOutputStream(this.conexao.getOutputStream());
     }
 
-    public ClienteThread(Socket conexao) throws IOException {
+    public Cliente(Socket conexao) throws IOException {
         this.conexao = conexao;
         saida = new ObjectOutputStream(this.conexao.getOutputStream());
     }
