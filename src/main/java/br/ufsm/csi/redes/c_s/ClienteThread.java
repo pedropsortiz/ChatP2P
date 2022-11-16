@@ -18,7 +18,6 @@ public class ClienteThread implements Runnable{
 
     private Thread worker;
     private final AtomicBoolean running = new AtomicBoolean(true);
-    private final AtomicBoolean mensagemEnvio = new AtomicBoolean(false);
     Socket conexao;
     DatagramSocket ds;
 
@@ -35,6 +34,7 @@ public class ClienteThread implements Runnable{
 
     @SneakyThrows
     public void start() {
+        running.set(true);
         worker = new Thread(this);
         worker.start();
     }
@@ -45,35 +45,20 @@ public class ClienteThread implements Runnable{
         System.out.println("Conexão do cliente encerrada!");
     }
 
-    public void send(Mensagem mensagem){
-        String msg = mensagem.getMensagemTexto();
-        try {
-            DatagramPacket dp =
-                    new DatagramPacket(msg.getBytes(),
-                            msg.getBytes().length,
-                            new InetSocketAddress(mensagem.getDestinatario().getEndereco(), 8081));
-            ds.send(dp);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     //TODO: Criar método de recebimento e envio de pacotes
 
-    public void setMensagem(Mensagem mensagem){
+    public void setMensagem(Mensagem mensagem) throws IOException {
         this.mensagem = mensagem;
-        mensagemEnvio.set(false);
+        ObjectOutputStream saida = new ObjectOutputStream(this.conexao.getOutputStream());
+        System.out.println(mensagem.mensagem());
+        saida.writeObject(mensagem.mensagem());
+        saida.flush();
     }
 
     @SneakyThrows
     public void run() {
-        running.set(true);
         while (running.get()) {
-                ObjectOutputStream saida = new ObjectOutputStream(conexao.getOutputStream());
-                saida.writeObject(mensagem.mensagem());
-                saida.flush();
-                saida.close();
-                Thread.sleep(1000);
+
         }
 
     }

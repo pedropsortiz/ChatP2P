@@ -1,5 +1,4 @@
 package br.ufsm.csi.redes.app;
-import br.ufsm.csi.redes.c_s.PeerServer;
 import br.ufsm.csi.redes.view.ChatClientSwing;
 import br.ufsm.csi.redes.c_s.ServidorThread;
 import br.ufsm.csi.redes.thread.*;

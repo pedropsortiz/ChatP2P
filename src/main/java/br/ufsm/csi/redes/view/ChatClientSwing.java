@@ -140,7 +140,10 @@ public class ChatClientSwing extends JFrame {
         ClienteThread conexao = new ClienteThread(user.getEndereco(), 8081);
         conexao.start();
         threadConexao.add(conexao);
-        tabbedPane.add(user.toString(), new PainelChatPVT(user));
+        synchronized (tabbedPane) {
+            //        tabbedPane.add(user.toString(), new PainelChatPVT(user));
+            tabbedPane.add("Peer1", new PainelChatPVT(user));
+        }
     }
 
     private Usuario getUsuario(InetAddress address) {
@@ -160,7 +163,10 @@ public class ChatClientSwing extends JFrame {
         //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
         ClienteThread cliente = new ClienteThread(conexao);
         threadConexao.add(cliente);
-        tabbedPane.add(usuario.toString() + "_rec", new PainelChatPVT(usuario));
+        synchronized (tabbedPane) {
+//        tabbedPane.add(usuario.toString(), new PainelChatPVT(usuario));
+            tabbedPane.add("Peer2", new PainelChatPVT(usuario));
+        }
     }
 
     public void adicionaUsuario(Usuario usuario){
@@ -214,12 +220,10 @@ public class ChatClientSwing extends JFrame {
                     if (user.equals(usuario)){
                         Integer indexConexao = chatsAbertos.indexOf(user);
                         ClienteThread conexao = threadConexao.get(indexConexao);
-                        conexao.start();
-                        conexao.setMensagem(mensagemUsuario);
                         try {
-                            conexao.stop();
+                            conexao.setMensagem(mensagemUsuario);
                         } catch (IOException ex) {
-                            throw new RuntimeException(ex);
+                            throw new RuntimeException("Erro ao enviar a mensagem: " + ex);
                         }
                     }
                 }
