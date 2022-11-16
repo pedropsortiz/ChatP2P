@@ -2,6 +2,8 @@ package br.ufsm.csi.redes.c_s;
 
 import br.ufsm.csi.redes.model.Mensagem;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
@@ -10,6 +12,8 @@ import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Getter
+@Setter
 public class ClienteThread implements Runnable{
 
     private InetAddress endereco;
@@ -18,9 +22,7 @@ public class ClienteThread implements Runnable{
 
     private Thread worker;
     private final AtomicBoolean running = new AtomicBoolean(true);
-    Socket conexao;
-    DatagramSocket ds;
-
+    private Socket conexao;
 
     public ClienteThread(InetAddress endereco, int porta) throws IOException {
         this.endereco = endereco;
@@ -50,7 +52,7 @@ public class ClienteThread implements Runnable{
     public void setMensagem(Mensagem mensagem) throws IOException {
         this.mensagem = mensagem;
         ObjectOutputStream saida = new ObjectOutputStream(this.conexao.getOutputStream());
-        System.out.println(mensagem.mensagem());
+//        System.out.println(mensagem.mensagem());
         saida.writeObject(mensagem.mensagem());
         saida.flush();
     }

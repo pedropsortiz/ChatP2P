@@ -2,15 +2,19 @@ package br.ufsm.csi.redes.view;
 import br.ufsm.csi.redes.model.Mensagem;
 import br.ufsm.csi.redes.model.Usuario;
 import br.ufsm.csi.redes.c_s.ClienteThread;
+import lombok.SneakyThrows;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static br.ufsm.csi.redes.model.Usuario.StatusUsuario.*;
 
@@ -142,7 +146,9 @@ public class ChatClientSwing extends JFrame {
         threadConexao.add(conexao);
         synchronized (tabbedPane) {
             //        tabbedPane.add(user.toString(), new PainelChatPVT(user));
-            tabbedPane.add("Peer1", new PainelChatPVT(user));
+            PainelChatPVT novaTab = new PainelChatPVT(user);
+            tabbedPane.add("Peer1", novaTab);
+            new EscreveMensagem().start(conexao, novaTab);
         }
     }
 
@@ -246,6 +252,38 @@ public class ChatClientSwing extends JFrame {
     public static void main(String[] args) throws UnknownHostException {
         new ChatClientSwing();
 
+    }
+
+    public class EscreveMensagem implements Runnable{
+
+        ClienteThread conexao;
+        PainelChatPVT tab;
+        AtomicBoolean parar = new AtomicBoolean();
+
+        public void start(ClienteThread conexao, PainelChatPVT tab){
+            this.conexao = conexao;
+            this.tab = tab;
+            this.parar.set(false);
+            new Thread(this).start();
+            System.out.println("Start thread");
+        }
+
+        public void stop(){
+            this.parar.set(true);
+        }
+
+
+        @SneakyThrows
+        @Override
+        public void run() {
+            ObjectInputStream entrada = new ObjectInputStream(conexao.getConexao().getInputStream());
+            while (!(parar.get())){
+                System.out.println("entrou aq");
+                if (entrada.readObject()!=null){
+                    System.out.println(entrada.readObject());
+                }
+            }
+        }
     }
 
 }
