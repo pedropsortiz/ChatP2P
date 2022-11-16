@@ -1,7 +1,7 @@
-package br.ufsm.csi.redes.server;
-import br.ufsm.csi.redes.gui.ChatClientSwing;
+package br.ufsm.csi.redes.app;
+import br.ufsm.csi.redes.view.ChatClientSwing;
 import br.ufsm.csi.redes.c_s.ServidorThread;
-import br.ufsm.csi.redes.packageThread.*;
+import br.ufsm.csi.redes.thread.*;
 
 import java.io.IOException;
 import java.net.InetAddress;

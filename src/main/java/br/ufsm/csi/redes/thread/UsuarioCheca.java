@@ -1,7 +1,7 @@
-package br.ufsm.csi.redes.packageThread;
+package br.ufsm.csi.redes.thread;
 
 import br.ufsm.csi.redes.model.Usuario;
-import br.ufsm.csi.redes.gui.ChatClientSwing;
+import br.ufsm.csi.redes.view.ChatClientSwing;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 

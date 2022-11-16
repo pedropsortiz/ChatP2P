@@ -1,6 +1,6 @@
 package br.ufsm.csi.redes.c_s;
 
-import br.ufsm.csi.redes.gui.ChatClientSwing;
+import br.ufsm.csi.redes.view.ChatClientSwing;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,7 +25,7 @@ public class ServidorThread {
             this.servidor = new ServerSocket(this.porta);
             new EsperaMensagem().start();
         } catch (Exception e){
-            System.out.println(e);
+            System.out.println("Erro ao iniciar servidor: " + e);
         }
     }
 

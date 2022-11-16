@@ -1,4 +1,4 @@
-package br.ufsm.csi.redes.gui;
+package br.ufsm.csi.redes.view;
 import br.ufsm.csi.redes.model.Mensagem;
 import br.ufsm.csi.redes.model.Usuario;
 import br.ufsm.csi.redes.c_s.ClienteThread;
@@ -124,7 +124,6 @@ public class ChatClientSwing extends JFrame {
                     if (chatsAbertos.add(user)) {
                         //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
                         ClienteThread conexao = new ClienteThread(user.getEndereco(), 8081);
-                        conexao.start();
                         threadConexao.add(conexao);
                         tabbedPane.add(user.toString(), new PainelChatPVT(user));
                     }
@@ -184,8 +183,14 @@ public class ChatClientSwing extends JFrame {
                 ) {
                     if (user.equals(usuario)){
                         Integer indexConexao = chatsAbertos.indexOf(user);
-                        this.conexaoUsuario = threadConexao.get(indexConexao);
-                        this.conexaoUsuario.setMensagem(mensagemUsuario);
+                        ClienteThread conexao = threadConexao.get(indexConexao);
+                        conexao.start();
+                        conexao.setMensagem(mensagemUsuario);
+                        try {
+                            conexao.stop();
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     }
                 }
                 // TODO: Enviar a mensagem do usuário remetente ao destinatário
