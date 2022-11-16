@@ -145,9 +145,8 @@ public class ChatClientSwing extends JFrame {
         conexao.start();
         threadConexao.add(conexao);
         synchronized (tabbedPane) {
-            //        tabbedPane.add(user.toString(), new PainelChatPVT(user));
             PainelChatPVT novaTab = new PainelChatPVT(user);
-            tabbedPane.add("Peer1", novaTab);
+            tabbedPane.add(user.toString(), novaTab);
             new EscreveMensagem().start(conexao, novaTab);
         }
     }
@@ -163,15 +162,16 @@ public class ChatClientSwing extends JFrame {
         return null;
     }
 
-    public void iniciaChat(Socket conexao) {
+    public void iniciaChat(Socket conexao) throws IOException {
         Usuario usuario = getUsuario(conexao.getInetAddress());
         chatsAbertos.add(usuario);
         //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
         ClienteThread cliente = new ClienteThread(conexao);
         threadConexao.add(cliente);
         synchronized (tabbedPane) {
-//        tabbedPane.add(usuario.toString(), new PainelChatPVT(usuario));
-            tabbedPane.add("Peer2", new PainelChatPVT(usuario));
+            PainelChatPVT novaTab = new PainelChatPVT(usuario);
+            tabbedPane.add(usuario.toString(), novaTab);
+            new EscreveMensagem().start(cliente, novaTab);
         }
     }
 
@@ -208,7 +208,7 @@ public class ChatClientSwing extends JFrame {
 
         ClienteThread conexaoUsuario;
 
-        public static void addMensagem(String mensagem){
+        public void addMensagem(String mensagem){
             areaChat.append(mensagem);
         }
 
@@ -265,7 +265,6 @@ public class ChatClientSwing extends JFrame {
             this.tab = tab;
             this.parar.set(false);
             new Thread(this).start();
-            System.out.println("Start thread");
         }
 
         public void stop(){
@@ -276,11 +275,11 @@ public class ChatClientSwing extends JFrame {
         @SneakyThrows
         @Override
         public void run() {
-            ObjectInputStream entrada = new ObjectInputStream(conexao.getConexao().getInputStream());
+            Socket socket = conexao.getConexao();
+            ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
             while (!(parar.get())){
-                System.out.println("entrou aq");
-                if (entrada.readObject()!=null){
-                    System.out.println(entrada.readObject());
+                if (entrada!=null && conexao.getRunning().get()){
+                    tab.addMensagem((String) entrada.readObject());
                 }
             }
         }

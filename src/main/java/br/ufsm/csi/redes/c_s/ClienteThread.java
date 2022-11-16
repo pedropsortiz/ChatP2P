@@ -23,15 +23,19 @@ public class ClienteThread implements Runnable{
     private Thread worker;
     private final AtomicBoolean running = new AtomicBoolean(true);
     private Socket conexao;
+    ObjectOutputStream saida;
+
 
     public ClienteThread(InetAddress endereco, int porta) throws IOException {
         this.endereco = endereco;
         this.porta = porta;
         this.conexao = new Socket(endereco, porta);
+        saida = new ObjectOutputStream(this.conexao.getOutputStream());
     }
 
-    public ClienteThread(Socket conexao){
+    public ClienteThread(Socket conexao) throws IOException {
         this.conexao = conexao;
+        saida = new ObjectOutputStream(this.conexao.getOutputStream());
     }
 
     @SneakyThrows
@@ -50,9 +54,6 @@ public class ClienteThread implements Runnable{
     //TODO: Criar método de recebimento e envio de pacotes
 
     public void setMensagem(Mensagem mensagem) throws IOException {
-        this.mensagem = mensagem;
-        ObjectOutputStream saida = new ObjectOutputStream(this.conexao.getOutputStream());
-//        System.out.println(mensagem.mensagem());
         saida.writeObject(mensagem.mensagem());
         saida.flush();
     }

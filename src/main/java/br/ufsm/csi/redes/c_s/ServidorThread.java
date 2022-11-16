@@ -37,19 +37,6 @@ public class ServidorThread {
         System.out.println("Conexão do servidor encerrada!");
     }
 
-    private void ouve(){
-        try {
-            conexao = serverSocket.accept();
-
-            entrada = new ObjectInputStream(conexao.getInputStream());
-            String mensagemFinal = entrada.readObject().toString();
-
-            ChatClientSwing.PainelChatPVT.addMensagem(mensagemFinal);
-        }catch (Exception e){
-            System.out.println(e);
-        }
-    }
-
     public class EsperaChat implements Runnable {
         @Override
         public void run() {
