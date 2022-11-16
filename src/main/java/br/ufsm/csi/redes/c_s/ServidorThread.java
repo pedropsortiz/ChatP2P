@@ -13,17 +13,18 @@ import java.net.Socket;
 public class ServidorThread {
 
     static final int porta = 8081;
-    private ChatClientSwing janela;
-    private ServerSocket servidor;
+    private ServerSocket serverSocket;
     private Socket conexao;
     public Boolean parar = false;
     private ObjectInputStream  entrada;
     private ObjectOutputStream saida;
+    private ChatClientSwing janela;
 
-    public ServidorThread() throws IOException {
+    public ServidorThread(ChatClientSwing janela) throws IOException {
         try {
-            this.servidor = new ServerSocket(this.porta);
-            new EsperaMensagem().start();
+            this.serverSocket = new ServerSocket(this.porta);
+            this.janela = janela;
+            new Thread(new EsperaChat()).start();
         } catch (Exception e){
             System.out.println("Erro ao iniciar servidor: " + e);
         }
@@ -32,13 +33,13 @@ public class ServidorThread {
     public void stop() throws Exception{
         parar = true;
         conexao.close();
-        servidor.close();
+        serverSocket.close();
         System.out.println("Conexão do servidor encerrada!");
     }
 
     private void ouve(){
         try {
-            conexao = servidor.accept();
+            conexao = serverSocket.accept();
 
             entrada = new ObjectInputStream(conexao.getInputStream());
             String mensagemFinal = entrada.readObject().toString();
@@ -49,12 +50,13 @@ public class ServidorThread {
         }
     }
 
-    public class EsperaMensagem extends Thread {
+    public class EsperaChat implements Runnable {
         @Override
         public void run() {
             while(!parar){
                 try {
-                    ouve();
+                    Socket conexao = serverSocket.accept();
+                    janela.iniciaChat(conexao);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

@@ -17,8 +17,8 @@ public class MensagemRadar implements Runnable{
 
     static {
         try {
-            endereco = InetAddress.getLocalHost();
-//            endereco = InetAddress.getByName("255.255.255.255");
+//            endereco = InetAddress.getLocalHost();
+            endereco = InetAddress.getByName("255.255.255.255");
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
@@ -28,7 +28,7 @@ public class MensagemRadar implements Runnable{
         this.janela = janela;
     }
 
-    DatagramSocket conexao = new DatagramSocket(porta, endereco);
+    DatagramSocket conexao = new DatagramSocket(porta);
 
     @SneakyThrows
     @Override

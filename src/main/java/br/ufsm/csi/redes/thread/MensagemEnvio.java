@@ -17,8 +17,8 @@ public class MensagemEnvio implements Runnable{
 
     static {
         try {
-            endereco = InetAddress.getLocalHost();
-//            endereco = InetAddress.getByName("255.255.255.255");
+//            endereco = InetAddress.getLocalHost();
+            endereco = InetAddress.getByName("255.255.255.255");
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
@@ -31,7 +31,7 @@ public class MensagemEnvio implements Runnable{
     @Override
     public void run() {
         while (true){
-            Usuario usuario = new Usuario(janela.retornarNomeUsuario(), janela.retornarStatusUsuario(), endereco, System.currentTimeMillis());
+            Usuario usuario = new Usuario(janela.retornarNomeUsuario(), janela.retornarStatusUsuario(), InetAddress.getLocalHost(), System.currentTimeMillis());
             Pacote pacote = Pacote.builder().tipoMensagem( Pacote.TipoPacote.SONDA).usuario(usuario).build();
             String StringMensagem =  new ObjectMapper().writeValueAsString(pacote);
             byte[] bArray = StringMensagem.getBytes("UTF-8");

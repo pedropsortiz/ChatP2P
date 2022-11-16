@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
@@ -121,16 +122,45 @@ public class ChatClientSwing extends JFrame {
                 if (evt.getClickCount() == 2) {
                     int index = list.locationToIndex(evt.getPoint());
                     Usuario user = (Usuario) list.getModel().getElementAt(index);
-                    if (chatsAbertos.add(user)) {
-                        //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
-                        ClienteThread conexao = new ClienteThread(user.getEndereco(), 8081);
-                        threadConexao.add(conexao);
-                        tabbedPane.add(user.toString(), new PainelChatPVT(user));
+                    try {
+                        iniciaChat(user);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
+
                 }
             }
         });
         return listaChat;
+    }
+
+    private void iniciaChat(Usuario user) throws IOException {
+        chatsAbertos.add(user);
+        //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
+        ClienteThread conexao = new ClienteThread(user.getEndereco(), 8081);
+        conexao.start();
+        threadConexao.add(conexao);
+        tabbedPane.add(user.toString(), new PainelChatPVT(user));
+    }
+
+    private Usuario getUsuario(InetAddress address) {
+        DefaultListModel listaUsuarios = retornarListaUsuarios();
+        for (int i = 0; i < listaUsuarios.getSize(); i++){
+            Usuario user = (Usuario) listaUsuarios.get(i);
+            if (user.getEndereco().equals(address)){
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public void iniciaChat(Socket conexao) {
+        Usuario usuario = getUsuario(conexao.getInetAddress());
+        chatsAbertos.add(usuario);
+        //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
+        ClienteThread cliente = new ClienteThread(conexao);
+        threadConexao.add(cliente);
+        tabbedPane.add(usuario.toString() + "_rec", new PainelChatPVT(usuario));
     }
 
     public void adicionaUsuario(Usuario usuario){

@@ -1,4 +1,5 @@
 package br.ufsm.csi.redes.app;
+import br.ufsm.csi.redes.c_s.PeerServer;
 import br.ufsm.csi.redes.view.ChatClientSwing;
 import br.ufsm.csi.redes.c_s.ServidorThread;
 import br.ufsm.csi.redes.thread.*;
@@ -25,7 +26,7 @@ public class App {
 
         System.out.println(ANSI_START + "Iniciando broadcasting para o endereço " + endereco + ANSI_RESET);
         System.out.println(ANSI_START + "Escutando porta " + porta + ANSI_RESET + "\n");
-        new ServidorThread();
+        new ServidorThread(janela);
         new Thread(new MensagemRadar(janela)).start();
         new Thread(new MensagemEnvio(janela)).start();
         new Thread(new UsuarioCheca(janela)).start();

@@ -23,17 +23,20 @@ public class ClienteThread implements Runnable{
     DatagramSocket ds;
 
 
-    public ClienteThread(InetAddress endereco, int porta){
+    public ClienteThread(InetAddress endereco, int porta) throws IOException {
         this.endereco = endereco;
         this.porta = porta;
+        this.conexao = new Socket(endereco, porta);
+    }
+
+    public ClienteThread(Socket conexao){
+        this.conexao = conexao;
     }
 
     @SneakyThrows
     public void start() {
         worker = new Thread(this);
         worker.start();
-//        conexao = new Socket(endereco, porta);
-        ds = new DatagramSocket(8081, InetAddress.getLocalHost());
     }
 
     public void stop() throws IOException {
