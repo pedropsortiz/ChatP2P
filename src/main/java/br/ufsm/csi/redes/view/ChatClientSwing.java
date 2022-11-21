@@ -145,10 +145,25 @@ public class ChatClientSwing extends JFrame {
         Cliente conexao = new Cliente(user.getEndereco(), 8081);
         conexao.start();
         threadConexao.add(conexao);
+        PainelChatPVT novaTab = new PainelChatPVT(user);
+        novaTab.addMensagem("Chat do cliente iniciado!\n");
         synchronized (tabbedPane) {
-            PainelChatPVT novaTab = new PainelChatPVT(user);
-            tabbedPane.add("Cliente: " + user.toString(), novaTab);
+            tabbedPane.add("Cliente: " + user, novaTab);
             new EscreveMensagem().start(conexao, novaTab);
+        }
+    }
+
+    public void iniciaChat(Socket conexao) throws IOException {
+        Usuario usuario = getUsuario(conexao.getInetAddress());
+        chatsAbertos.add(usuario);
+        //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
+        Cliente cliente = new Cliente(conexao);
+        threadConexao.add(cliente);
+        PainelChatPVT novaTab = new PainelChatPVT(usuario);
+        novaTab.addMensagem("Chat do servidor iniciado!\n");
+        synchronized (tabbedPane) {
+            tabbedPane.add("Servidor: " + usuario.toString(), novaTab);
+//            new EscreveMensagem().start(cliente, novaTab);
         }
     }
 
@@ -161,19 +176,6 @@ public class ChatClientSwing extends JFrame {
             }
         }
         return null;
-    }
-
-    public void iniciaChat(Socket conexao) throws IOException {
-        Usuario usuario = getUsuario(conexao.getInetAddress());
-        chatsAbertos.add(usuario);
-        //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
-        Cliente cliente = new Cliente(conexao);
-        threadConexao.add(cliente);
-        synchronized (tabbedPane) {
-            PainelChatPVT novaTab = new PainelChatPVT(usuario);
-            tabbedPane.add("Servidor: " + usuario.toString(), novaTab);
-            new EscreveMensagem().start(cliente, novaTab);
-        }
     }
 
     public void adicionaUsuario(Usuario usuario){
@@ -203,11 +205,9 @@ public class ChatClientSwing extends JFrame {
 
     public class PainelChatPVT extends JPanel {
 
-        static JTextArea areaChat;
+        JTextArea areaChat;
         JTextField campoEntrada;
         Usuario usuario;
-
-        Cliente conexaoUsuario;
 
         public void addMensagem(String mensagem){
             areaChat.append(mensagem);
@@ -278,9 +278,9 @@ public class ChatClientSwing extends JFrame {
             Socket socket = conexao.getConexao();
             ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
             while (!(parar.get())){
-                if (entrada!=null && conexao.getRunning().get()){
+                if (entrada!=null ){
                     synchronized (tab){
-                        tab.addMensagem((String) entrada.readObject());
+                        tab.areaChat.append((String) entrada.readObject());
                     }
                 }
             }

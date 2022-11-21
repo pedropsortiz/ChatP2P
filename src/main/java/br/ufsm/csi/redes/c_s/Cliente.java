@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -53,7 +54,6 @@ public class Cliente implements Runnable{
 
     public void setMensagem(Mensagem mensagem) throws IOException {
         saida.writeObject(mensagem.mensagem());
-        System.out.println(mensagem.mensagem());
         saida.flush();
     }
 
