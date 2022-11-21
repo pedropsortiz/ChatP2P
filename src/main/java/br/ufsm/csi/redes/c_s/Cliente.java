@@ -53,6 +53,7 @@ public class Cliente implements Runnable{
 
     public void setMensagem(Mensagem mensagem) throws IOException {
         saida.writeObject(mensagem.mensagem());
+        System.out.println(mensagem.mensagem());
         saida.flush();
     }
 

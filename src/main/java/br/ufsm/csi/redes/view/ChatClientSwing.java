@@ -147,7 +147,7 @@ public class ChatClientSwing extends JFrame {
         threadConexao.add(conexao);
         synchronized (tabbedPane) {
             PainelChatPVT novaTab = new PainelChatPVT(user);
-            tabbedPane.add(user.toString(), novaTab);
+            tabbedPane.add("Cliente: " + user.toString(), novaTab);
             new EscreveMensagem().start(conexao, novaTab);
         }
     }
@@ -171,7 +171,7 @@ public class ChatClientSwing extends JFrame {
         threadConexao.add(cliente);
         synchronized (tabbedPane) {
             PainelChatPVT novaTab = new PainelChatPVT(usuario);
-            tabbedPane.add(usuario.toString(), novaTab);
+            tabbedPane.add("Servidor: " + usuario.toString(), novaTab);
             new EscreveMensagem().start(cliente, novaTab);
         }
     }
@@ -271,7 +271,6 @@ public class ChatClientSwing extends JFrame {
         public void stop(){
             this.parar.set(true);
         }
-
 
         @SneakyThrows
         @Override

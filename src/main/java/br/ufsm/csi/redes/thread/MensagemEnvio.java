@@ -18,8 +18,8 @@ public class MensagemEnvio implements Runnable{
     static {
         try {
 //            endereco = InetAddress.getByName("192.168.81.151");
-              endereco = InetAddress.getByName("192.168.81.161");
-//            endereco = InetAddress.getByName("255.255.255.255");
+//            endereco = InetAddress.getByName("192.168.81.161");
+            endereco = InetAddress.getByName("255.255.255.255");
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
