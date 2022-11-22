@@ -60,7 +60,7 @@ public class Cliente implements Runnable{
     @SneakyThrows
     public void run() {
         while (running.get()) {
-
+            //
         }
 
     }

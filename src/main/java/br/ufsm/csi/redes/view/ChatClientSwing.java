@@ -26,7 +26,8 @@ public class ChatClientSwing extends JFrame {
     private DefaultListModel dfListModel;
     private JTabbedPane tabbedPane = new JTabbedPane();
     private ArrayList<Usuario> chatsAbertos = new ArrayList<>();
-    private ArrayList<Cliente> threadConexao = new ArrayList<>();
+    private ArrayList<Cliente> threadConexaoCliente = new ArrayList<>();
+    private ArrayList<Cliente> threadConexaoServidor = new ArrayList<>();
 
 
     public ChatClientSwing() throws UnknownHostException {
@@ -82,14 +83,14 @@ public class ChatClientSwing extends JFrame {
                              ) {
                             if (user.equals(painel.getUsuario())){
                                 Integer indexConexao = chatsAbertos.indexOf(user);
-                                Cliente conexaoCliente = threadConexao.get(indexConexao);
+                                Cliente conexaoCliente = threadConexaoCliente.get(indexConexao);
                                 try {
                                     conexaoCliente.stop();
                                 } catch (IOException ex) {
                                     throw new RuntimeException(ex);
                                 }
 
-                                threadConexao.remove(indexConexao);
+                                threadConexaoCliente.remove(indexConexao);
                                 chatsAbertos.remove(indexConexao);
                             }
                         }
@@ -144,9 +145,9 @@ public class ChatClientSwing extends JFrame {
         //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
         Cliente conexao = new Cliente(user.getEndereco(), 8081);
         conexao.start();
-        threadConexao.add(conexao);
+        threadConexaoCliente.add(conexao);
         PainelChatPVT novaTab = new PainelChatPVT(user);
-        novaTab.addMensagem("Chat do cliente iniciado!\n");
+        novaTab.addMensagem("Chat do cliente iniciado!\n\n");
         synchronized (tabbedPane) {
             tabbedPane.add("Cliente: " + user, novaTab);
             new EscreveMensagem().start(conexao, novaTab);
@@ -155,15 +156,14 @@ public class ChatClientSwing extends JFrame {
 
     public void iniciaChat(Socket conexao) throws IOException {
         Usuario usuario = getUsuario(conexao.getInetAddress());
-        chatsAbertos.add(usuario);
         //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
         Cliente cliente = new Cliente(conexao);
-        threadConexao.add(cliente);
+        threadConexaoCliente.add(cliente);
         PainelChatPVT novaTab = new PainelChatPVT(usuario);
-        novaTab.addMensagem("Chat do servidor iniciado!\n");
+        novaTab.addMensagem("Chat do servidor iniciado!\n\n");
         synchronized (tabbedPane) {
             tabbedPane.add("Servidor: " + usuario.toString(), novaTab);
-//            new EscreveMensagem().start(cliente, novaTab);
+            new EscreveMensagem().start(cliente, novaTab);
         }
     }
 
@@ -226,9 +226,11 @@ public class ChatClientSwing extends JFrame {
                 ) {
                     if (user.equals(usuario)){
                         Integer indexConexao = chatsAbertos.indexOf(user);
-                        Cliente conexao = threadConexao.get(indexConexao);
+                        Cliente conexao = threadConexaoCliente.get(indexConexao);
+                        Cliente conexao2 = threadConexaoCliente.get(indexConexao+1);
                         try {
                             conexao.setMensagem(mensagemUsuario);
+                            conexao2.setMensagem(mensagemUsuario);
                         } catch (IOException ex) {
                             throw new RuntimeException("Erro ao enviar a mensagem: " + ex);
                         }
@@ -278,7 +280,7 @@ public class ChatClientSwing extends JFrame {
             Socket socket = conexao.getConexao();
             ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
             while (!(parar.get())){
-                if (entrada!=null ){
+                if (entrada!=null){
                     synchronized (tab){
                         tab.areaChat.append((String) entrada.readObject());
                     }
