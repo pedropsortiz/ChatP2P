@@ -84,8 +84,10 @@ public class ChatClientSwing extends JFrame {
                             if (user.equals(painel.getUsuario())){
                                 Integer indexConexao = chatsAbertos.indexOf(user);
                                 Cliente conexaoCliente = threadConexaoCliente.get(indexConexao);
+                                Cliente conexaoCliente2 = threadConexaoCliente.get(indexConexao+1);
                                 try {
                                     conexaoCliente.stop();
+                                    conexaoCliente2.stop();
                                 } catch (IOException ex) {
                                     throw new RuntimeException(ex);
                                 }
