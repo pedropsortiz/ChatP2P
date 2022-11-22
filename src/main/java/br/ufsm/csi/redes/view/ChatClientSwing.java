@@ -276,16 +276,30 @@ public class ChatClientSwing extends JFrame {
             this.parar.set(true);
         }
 
+        public boolean checaConexao(){
+            for (Cliente cliente:threadConexaoCliente
+                 ) {
+                if (cliente.equals(conexao) && !(cliente.getRunning().get())){
+                    return true;
+                }
+            }
+            return false;
+        }
+
         @SneakyThrows
         @Override
         public void run() {
             Socket socket = conexao.getConexao();
             ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
             while (!(parar.get())){
-                if (entrada!=null){
-                    synchronized (tab){
-                        tab.areaChat.append((String) entrada.readObject());
+                if (!checaConexao()){
+                    if (entrada!=null){
+                        synchronized (tab){
+                            tab.areaChat.append((String) entrada.readObject());
+                        }
                     }
+                }else{
+                    stop();
                 }
             }
         }
