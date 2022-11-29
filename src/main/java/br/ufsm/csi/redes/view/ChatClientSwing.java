@@ -1,7 +1,6 @@
 package br.ufsm.csi.redes.view;
 import br.ufsm.csi.redes.model.Usuario;
 import br.ufsm.csi.redes.c_s.Cliente;
-import lombok.SneakyThrows;
 
 import javax.swing.*;
 import java.awt.*;
@@ -114,15 +113,15 @@ public class ChatClientSwing extends JFrame {
         return listaChat;
     }
 
-    private void iniciaChat(Usuario user) throws IOException {
-        chatsAbertos.add(user);
-        Cliente cliente = new Cliente(user.getEndereco(), 8081);
-        PainelChatPVT novaTab = new PainelChatPVT(user);
+    private void iniciaChat(Usuario usuario) throws IOException {
+        chatsAbertos.add(usuario);
+        Cliente cliente = new Cliente(usuario.getEndereco(), 8081);
+        PainelChatPVT novaTab = new PainelChatPVT(usuario);
         cliente.setTab(novaTab);
         cliente.start();
         novaTab.conexao = cliente;
         synchronized (tabbedPane) {
-            tabbedPane.add(user.toString(), novaTab);
+            tabbedPane.add(usuario.toString(), novaTab);
         }
     }
 
