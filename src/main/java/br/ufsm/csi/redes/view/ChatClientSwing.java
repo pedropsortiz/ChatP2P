@@ -2,33 +2,26 @@ package br.ufsm.csi.redes.view;
 import br.ufsm.csi.redes.model.Mensagem;
 import br.ufsm.csi.redes.model.Usuario;
 import br.ufsm.csi.redes.c_s.Cliente;
-import lombok.SneakyThrows;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static br.ufsm.csi.redes.model.Usuario.StatusUsuario.*;
 
 
 public class ChatClientSwing extends JFrame {
 
-    private Usuario meuUsuario = new Usuario();
-    private final String endBroadcast = "255.255.255.255";
+    private Usuario meuUsuario;
     private JList listaChat;
     private DefaultListModel dfListModel;
     private JTabbedPane tabbedPane = new JTabbedPane();
     private ArrayList<Usuario> chatsAbertos = new ArrayList<>();
-    private ArrayList<Cliente> threadConexaoCliente = new ArrayList<>();
-    private ArrayList<Cliente> threadConexaoServidor = new ArrayList<>();
-
 
     public ChatClientSwing() throws UnknownHostException {
         setLayout(new GridBagLayout());
@@ -79,22 +72,10 @@ public class ChatClientSwing extends JFrame {
                     JMenuItem item = new JMenuItem("Fechar");
                     item.addActionListener(e1 -> {
                         PainelChatPVT painel = (PainelChatPVT) tabbedPane.getComponentAt(tab);
-                        for (Usuario user: chatsAbertos
-                             ) {
-                            if (user.equals(painel.getUsuario())){
-                                Integer indexConexao = chatsAbertos.indexOf(user);
-                                Cliente conexaoCliente = threadConexaoCliente.get(indexConexao);
-                                Cliente conexaoCliente2 = threadConexaoCliente.get(indexConexao+1);
-                                try {
-                                    conexaoCliente.stop();
-                                    conexaoCliente2.stop();
-                                } catch (IOException ex) {
-                                    throw new RuntimeException(ex);
-                                }
-
-                                threadConexaoCliente.remove(indexConexao);
-                                chatsAbertos.remove(indexConexao);
-                            }
+                        try {
+                            painel.conexao.stop();
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
                         }
                         tabbedPane.remove(tab);
                         //TODO: Desconectar o meuUsuário com o Usuário desligado
@@ -145,14 +126,13 @@ public class ChatClientSwing extends JFrame {
     private void iniciaChat(Usuario user) throws IOException {
         chatsAbertos.add(user);
         //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
-        Cliente conexao = new Cliente(user.getEndereco(), 8081);
-        conexao.start();
-        threadConexaoCliente.add(conexao);
+        Cliente cliente = new Cliente(user.getEndereco(), 8081);
         PainelChatPVT novaTab = new PainelChatPVT(user);
-        novaTab.addMensagem("Chat do cliente iniciado!\n\n");
+        cliente.setAreaChat(novaTab.areaChat);
+        cliente.start();
+        novaTab.conexao = cliente;
         synchronized (tabbedPane) {
-            tabbedPane.add("Cliente: " + user, novaTab);
-            new EscreveMensagem().start(conexao, novaTab);
+            tabbedPane.add(user.toString(), novaTab);
         }
     }
 
@@ -160,12 +140,12 @@ public class ChatClientSwing extends JFrame {
         Usuario usuario = getUsuario(conexao.getInetAddress());
         //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
         Cliente cliente = new Cliente(conexao);
-        threadConexaoCliente.add(cliente);
         PainelChatPVT novaTab = new PainelChatPVT(usuario);
-        novaTab.addMensagem("Chat do servidor iniciado!\n\n");
+        cliente.setAreaChat(novaTab.areaChat);
+        cliente.start();
+        novaTab.conexao = cliente;
         synchronized (tabbedPane) {
-            tabbedPane.add("Servidor: " + usuario.toString(), novaTab);
-            new EscreveMensagem().start(cliente, novaTab);
+            tabbedPane.add(usuario.toString(), novaTab);
         }
     }
 
@@ -210,10 +190,7 @@ public class ChatClientSwing extends JFrame {
         JTextArea areaChat;
         JTextField campoEntrada;
         Usuario usuario;
-
-        public void addMensagem(String mensagem){
-            areaChat.append(mensagem);
-        }
+        Cliente conexao;
 
         PainelChatPVT(Usuario usuario) {
             setLayout(new GridBagLayout());
@@ -224,19 +201,12 @@ public class ChatClientSwing extends JFrame {
             campoEntrada.addActionListener(e -> {
                 ((JTextField) e.getSource()).setText("");
                 Mensagem mensagemUsuario = new Mensagem(e.getActionCommand(), meuUsuario, usuario);
-                for (Usuario user: chatsAbertos
-                ) {
-                    if (user.equals(usuario)){
-                        Integer indexConexao = chatsAbertos.indexOf(user);
-                        Cliente conexao = threadConexaoCliente.get(indexConexao);
-                        Cliente conexao2 = threadConexaoCliente.get(indexConexao+1);
-                        try {
-                            conexao.setMensagem(mensagemUsuario);
-                            conexao2.setMensagem(mensagemUsuario);
-                        } catch (IOException ex) {
-                            throw new RuntimeException("Erro ao enviar a mensagem: " + ex);
-                        }
-                    }
+                try {
+                    areaChat.append(mensagemUsuario.mensagem());
+                    this.conexao.setMensagem(mensagemUsuario);
+//                    conexaoMeuUsuario.setMensagem(mensagemUsuario);
+                } catch (IOException ex) {
+                    throw new RuntimeException("Erro ao enviar a mensagem: " + ex);
                 }
                 // TODO: Enviar a mensagem do usuário remetente ao destinatário
             });
@@ -257,52 +227,6 @@ public class ChatClientSwing extends JFrame {
     public static void main(String[] args) throws UnknownHostException {
         new ChatClientSwing();
 
-    }
-
-    public class EscreveMensagem implements Runnable{
-
-        Cliente conexao;
-        PainelChatPVT tab;
-        AtomicBoolean parar = new AtomicBoolean();
-
-        public void start(Cliente conexao, PainelChatPVT tab){
-            this.conexao = conexao;
-            this.tab = tab;
-            this.parar.set(false);
-            new Thread(this).start();
-        }
-
-        public void stop(){
-            this.parar.set(true);
-        }
-
-        public boolean checaConexao(){
-            for (Cliente cliente:threadConexaoCliente
-                 ) {
-                if (cliente.equals(conexao) && !(cliente.getRunning().get())){
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        @SneakyThrows
-        @Override
-        public void run() {
-            Socket socket = conexao.getConexao();
-            ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
-            while (!(parar.get())){
-                if (!checaConexao()){
-                    if (entrada!=null){
-                        synchronized (tab){
-                            tab.areaChat.append((String) entrada.readObject());
-                        }
-                    }
-                }else{
-                    stop();
-                }
-            }
-        }
     }
 
 }

@@ -1,14 +1,17 @@
 package br.ufsm.csi.redes.c_s;
 
 import br.ufsm.csi.redes.model.Mensagem;
+import br.ufsm.csi.redes.view.ChatClientSwing;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Getter
@@ -23,7 +26,21 @@ public class Cliente implements Runnable{
     private final AtomicBoolean running = new AtomicBoolean(true);
     private Socket conexao;
     ObjectOutputStream saida;
+    JTextArea areaChat;
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cliente cliente = (Cliente) o;
+        return Objects.equals(conexao, cliente.conexao);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(conexao);
+    }
 
     public Cliente(InetAddress endereco, int porta) throws IOException {
         this.endereco = endereco;
@@ -33,6 +50,8 @@ public class Cliente implements Runnable{
     }
 
     public Cliente(Socket conexao) throws IOException {
+        this.endereco = conexao.getInetAddress();
+        this.porta = conexao.getPort();
         this.conexao = conexao;
         saida = new ObjectOutputStream(this.conexao.getOutputStream());
     }
@@ -45,9 +64,8 @@ public class Cliente implements Runnable{
     }
 
     public void stop() throws IOException {
-        running.set(false);
         conexao.close();
-        System.out.println("Conexão do cliente encerrada!");
+        running.set(false);
     }
 
     //TODO: Criar método de recebimento e envio de pacotes
@@ -59,8 +77,16 @@ public class Cliente implements Runnable{
 
     @SneakyThrows
     public void run() {
-        while (running.get()) {
-            //
+        ObjectInputStream entrada = new ObjectInputStream(conexao.getInputStream());
+        while (true) {
+            synchronized (entrada) {
+                try {
+                    areaChat.append((String) entrada.readObject());
+                } catch(Exception e){
+                    areaChat.append("\nUsuário desconectado!");
+                    break;
+                }
+            }
         }
 
     }

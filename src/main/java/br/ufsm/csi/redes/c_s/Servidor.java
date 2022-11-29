@@ -21,20 +21,9 @@ public class Servidor {
     private ChatClientSwing janela;
 
     public Servidor(ChatClientSwing janela) throws IOException {
-        try {
-            this.serverSocket = new ServerSocket(this.porta);
-            this.janela = janela;
-            new Thread(new EsperaChat()).start();
-        } catch (Exception e){
-            System.out.println("Erro ao iniciar servidor: " + e);
-        }
-    }
-
-    public void stop() throws Exception{
-        parar = true;
-        conexao.close();
-        serverSocket.close();
-        System.out.println("Conexão do servidor encerrada!");
+        this.serverSocket = new ServerSocket(this.porta);
+        this.janela = janela;
+        new Thread(new EsperaChat()).start();
     }
 
     public class EsperaChat implements Runnable {
