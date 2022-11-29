@@ -26,7 +26,7 @@ public class Cliente implements Runnable{
     private final AtomicBoolean running = new AtomicBoolean(true);
     private Socket conexao;
     ObjectOutputStream saida;
-    JTextArea areaChat;
+    ChatClientSwing.PainelChatPVT tab;
 
 
     @Override
@@ -81,9 +81,10 @@ public class Cliente implements Runnable{
         while (true) {
             synchronized (entrada) {
                 try {
-                    areaChat.append((String) entrada.readObject());
+                    tab.areaChat.append((String) entrada.readObject());
                 } catch(Exception e){
-                    areaChat.append("\nUsuário desconectado!");
+                    tab.areaChat.append("\nUsuário desconectado!");
+                    tab.campoEntrada.setEnabled(false);
                     break;
                 }
             }

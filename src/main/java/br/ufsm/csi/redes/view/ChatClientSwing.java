@@ -78,7 +78,6 @@ public class ChatClientSwing extends JFrame {
                             throw new RuntimeException(ex);
                         }
                         tabbedPane.remove(tab);
-                        //TODO: Desconectar o meuUsuário com o Usuário desligado
                     });
                     popupMenu.add(item);
                     popupMenu.show(e.getComponent(), e.getX(), e.getY());
@@ -125,10 +124,9 @@ public class ChatClientSwing extends JFrame {
 
     private void iniciaChat(Usuario user) throws IOException {
         chatsAbertos.add(user);
-        //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
         Cliente cliente = new Cliente(user.getEndereco(), 8081);
         PainelChatPVT novaTab = new PainelChatPVT(user);
-        cliente.setAreaChat(novaTab.areaChat);
+        cliente.setTab(novaTab);
         cliente.start();
         novaTab.conexao = cliente;
         synchronized (tabbedPane) {
@@ -138,13 +136,13 @@ public class ChatClientSwing extends JFrame {
 
     public void iniciaChat(Socket conexao) throws IOException {
         Usuario usuario = getUsuario(conexao.getInetAddress());
-        //TODO: Estabelecer conexão do meuUsuario com o usuário selecionado nesse ponto
         Cliente cliente = new Cliente(conexao);
         PainelChatPVT novaTab = new PainelChatPVT(usuario);
-        cliente.setAreaChat(novaTab.areaChat);
+        cliente.setTab(novaTab);
         cliente.start();
         novaTab.conexao = cliente;
         synchronized (tabbedPane) {
+            assert usuario != null;
             tabbedPane.add(usuario.toString(), novaTab);
         }
     }
@@ -187,8 +185,8 @@ public class ChatClientSwing extends JFrame {
 
     public class PainelChatPVT extends JPanel {
 
-        JTextArea areaChat;
-        JTextField campoEntrada;
+        public JTextArea areaChat;
+        public JTextField campoEntrada;
         Usuario usuario;
         Cliente conexao;
 
@@ -204,11 +202,9 @@ public class ChatClientSwing extends JFrame {
                 try {
                     areaChat.append(mensagemUsuario.mensagem());
                     this.conexao.setMensagem(mensagemUsuario);
-//                    conexaoMeuUsuario.setMensagem(mensagemUsuario);
                 } catch (IOException ex) {
                     throw new RuntimeException("Erro ao enviar a mensagem: " + ex);
                 }
-                // TODO: Enviar a mensagem do usuário remetente ao destinatário
             });
             add(new JScrollPane(areaChat), new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
             add(campoEntrada, new GridBagConstraints(0, 1, 1, 1, 1, 0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
