@@ -1,6 +1,7 @@
 package br.ufsm.csi.redes.view;
 import br.ufsm.csi.redes.model.Usuario;
 import br.ufsm.csi.redes.c_s.Cliente;
+import lombok.SneakyThrows;
 
 import javax.swing.*;
 import java.awt.*;
@@ -78,15 +79,9 @@ public class ChatClientSwing extends JFrame {
         this.setLocation(x, y);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("\uD83E\uDDD1\u200D\uD83D\uDCBB Chat P2P - Redes de Computadores");
-        String nomeUsuario = null;
-        while (nomeUsuario == null || nomeUsuario.isBlank() || nomeUsuario.isEmpty()) {
-            String mensagem = "Digite seu nickname: ";
-            if (nomeUsuario.isEmpty() || nomeUsuario.isBlank()) {
-                mensagem += "\n\nEste campo e obrigatorio!";
-            } else {
-                mensagem += "\n\nConexão já estabelecida ou nickname já ocupado!";
-            }
-            nomeUsuario = JOptionPane.showInputDialog(this, mensagem);
+        String nomeUsuario = "";
+        while (nomeUsuario.isEmpty()) {
+            nomeUsuario = JOptionPane.showInputDialog(this, "Digite seu nickname: ");
         }
         this.meuUsuario = new Usuario(nomeUsuario, DISPONIVEL, InetAddress.getLocalHost(), null);
         setVisible(true);
