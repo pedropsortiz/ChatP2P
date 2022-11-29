@@ -80,8 +80,12 @@ public class ChatClientSwing extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("\uD83E\uDDD1\u200D\uD83D\uDCBB Chat P2P - Redes de Computadores");
         String nomeUsuario = "";
-        while (nomeUsuario.isEmpty()) {
-            nomeUsuario = JOptionPane.showInputDialog(this, "Digite seu nickname: ");
+        try {
+            while (nomeUsuario.isEmpty()) {
+                nomeUsuario = JOptionPane.showInputDialog(this, "Digite seu nickname: ");
+            }
+        } catch (Exception e){
+            System.exit(0);
         }
         this.meuUsuario = new Usuario(nomeUsuario, DISPONIVEL, InetAddress.getLocalHost(), null);
         setVisible(true);
