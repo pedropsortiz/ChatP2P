@@ -78,7 +78,16 @@ public class ChatClientSwing extends JFrame {
         this.setLocation(x, y);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("\uD83E\uDDD1\u200D\uD83D\uDCBB Chat P2P - Redes de Computadores");
-        String nomeUsuario = JOptionPane.showInputDialog(this, "Digite seu nickname: ");
+        String nomeUsuario = null;
+        while (nomeUsuario == null || nomeUsuario.isBlank() || nomeUsuario.isEmpty()) {
+            if (nomeUsuario == null){
+                nomeUsuario = JOptionPane.showInputDialog(this, "Digite seu nickname: ");
+            } else if (nomeUsuario.isEmpty() || nomeUsuario.isBlank()) {
+                nomeUsuario = JOptionPane.showInputDialog(this, "Digite seu nickname: \n\nEste campo e obrigatorio!");
+            } else {
+                nomeUsuario = JOptionPane.showInputDialog(this, "Digite seu nickname: \n\nConexão já estabelecida ou nickname já ocupado!");
+            }
+        }
         this.meuUsuario = new Usuario(nomeUsuario, DISPONIVEL, InetAddress.getLocalHost(), null);
         setVisible(true);
         menuBar.add(new JMenu("\uD83E\uDD20 - " + meuUsuario.getNome()));
