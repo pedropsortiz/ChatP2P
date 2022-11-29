@@ -95,6 +95,7 @@ public class ChatClientSwing extends JFrame {
     public JComponent criaLista() {
         dfListModel = new DefaultListModel();
         listaChat = new JList(dfListModel);
+
         listaChat.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 JList list = (JList) evt.getSource();
