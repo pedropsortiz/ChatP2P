@@ -24,7 +24,7 @@ public class MensagemRadar implements Runnable{
     @Override
     public void run() {
         while (true){
-//            conexao.setBroadcast(true);
+            conexao.setBroadcast(true);
             byte[] buffer = new byte[conexao.getReceiveBufferSize()];
             DatagramPacket pacoteDetectado = new DatagramPacket(buffer, buffer.length);
             conexao.receive(pacoteDetectado);

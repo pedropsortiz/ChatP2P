@@ -1,5 +1,4 @@
 package br.ufsm.csi.redes.view;
-import br.ufsm.csi.redes.model.Mensagem;
 import br.ufsm.csi.redes.model.Usuario;
 import br.ufsm.csi.redes.c_s.Cliente;
 
@@ -31,32 +30,17 @@ public class ChatClientSwing extends JFrame {
         ButtonGroup group = new ButtonGroup();
         JRadioButtonMenuItem rbMenuItem = new JRadioButtonMenuItem(DISPONIVEL.name());
         rbMenuItem.setSelected(true);
-        rbMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                ChatClientSwing.this.meuUsuario.setStatus(DISPONIVEL);
-            }
-        });
+        rbMenuItem.addActionListener(actionEvent -> ChatClientSwing.this.meuUsuario.setStatus(DISPONIVEL));
         group.add(rbMenuItem);
         menu.add(rbMenuItem);
 
         rbMenuItem = new JRadioButtonMenuItem(NAO_PERTURBE.name());
-        rbMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                ChatClientSwing.this.meuUsuario.setStatus(NAO_PERTURBE);
-            }
-        });
+        rbMenuItem.addActionListener(actionEvent -> ChatClientSwing.this.meuUsuario.setStatus(NAO_PERTURBE));
         group.add(rbMenuItem);
         menu.add(rbMenuItem);
 
         rbMenuItem = new JRadioButtonMenuItem(VOLTO_LOGO.name());
-        rbMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                ChatClientSwing.this.meuUsuario.setStatus(VOLTO_LOGO);
-            }
-        });
+        rbMenuItem.addActionListener(actionEvent -> ChatClientSwing.this.meuUsuario.setStatus(VOLTO_LOGO));
         group.add(rbMenuItem);
         menu.add(rbMenuItem);
 
@@ -198,24 +182,16 @@ public class ChatClientSwing extends JFrame {
             campoEntrada = new JTextField();
             campoEntrada.addActionListener(e -> {
                 ((JTextField) e.getSource()).setText("");
-                Mensagem mensagemUsuario = new Mensagem(e.getActionCommand(), meuUsuario, usuario);
                 try {
-                    areaChat.append(mensagemUsuario.mensagem());
-                    this.conexao.setMensagem(mensagemUsuario);
+                    areaChat.append(meuUsuario.getNome() + ": " + e.getActionCommand() + "\n");
+                    this.conexao.getSaida().writeObject(meuUsuario.getNome() + ": " + e.getActionCommand() + "\n");
+                    this.conexao.getSaida().flush();
                 } catch (IOException ex) {
                     throw new RuntimeException("Erro ao enviar a mensagem: " + ex);
                 }
             });
             add(new JScrollPane(areaChat), new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
             add(campoEntrada, new GridBagConstraints(0, 1, 1, 1, 1, 0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-        }
-
-        public Usuario getUsuario() {
-            return usuario;
-        }
-
-        public void setUsuario(Usuario usuario) {
-            this.usuario = usuario;
         }
 
     }

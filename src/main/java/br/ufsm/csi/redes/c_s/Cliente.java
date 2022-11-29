@@ -1,12 +1,10 @@
 package br.ufsm.csi.redes.c_s;
 
-import br.ufsm.csi.redes.model.Mensagem;
 import br.ufsm.csi.redes.view.ChatClientSwing;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -20,8 +18,6 @@ public class Cliente implements Runnable{
 
     private InetAddress endereco;
     private int porta;
-    private Mensagem mensagem = null;
-
     private Thread worker;
     private final AtomicBoolean running = new AtomicBoolean(true);
     private Socket conexao;
@@ -66,13 +62,6 @@ public class Cliente implements Runnable{
     public void stop() throws IOException {
         conexao.close();
         running.set(false);
-    }
-
-    //TODO: Criar método de recebimento e envio de pacotes
-
-    public void setMensagem(Mensagem mensagem) throws IOException {
-        saida.writeObject(mensagem.mensagem());
-        saida.flush();
     }
 
     @SneakyThrows
